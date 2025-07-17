@@ -1,0 +1,49 @@
+<div class="grid grid-cols-3 gap-4" id="metrics-section">
+    <div class="text-center">
+        <p class="text-sm text-gray-600 mb-2">Energy</p>
+        <div class="flex justify-center gap-1">
+            {% for i in range(5) %}
+            <button class="{% if progress.performance_metrics.energy >= i + 1 %}text-yellow-500{% else %}text-gray-300{% endif %} hover:text-yellow-500 transition-colors"
+                    hx-post="/api/update-metric"
+                    hx-vals='{"metric": "energy", "value": {{ i + 1 }}}'
+                    hx-target="#metrics-section"
+                    hx-swap="outerHTML"
+                    hx-trigger="click">
+                <i data-lucide="{% if progress.performance_metrics.energy >= i + 1 %}star-fill{% else %}star{% endif %}" class="w-5 h-5 fill-current"></i>
+            </button>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <div class="text-center">
+        <p class="text-sm text-gray-600 mb-2">Focus</p>
+        <div class="flex justify-center gap-1">
+            {% for i in range(5) %}
+            <button class="{% if progress.performance_metrics.focus >= i + 1 %}text-yellow-500{% else %}text-gray-300{% endif %} hover:text-yellow-500 transition-colors"
+                    hx-post="/api/update-metric"
+                    hx-vals='{"metric": "focus", "value": {{ i + 1 }}}'
+                    hx-target="#metrics-section"
+                    hx-swap="outerHTML"
+                    hx-trigger="click">
+                <i data-lucide="{% if progress.performance_metrics.focus >= i + 1 %}star-fill{% else %}star{% endif %}" class="w-5 h-5 fill-current"></i>
+            </button>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <div class="text-center">
+        <p class="text-sm text-gray-600 mb-2">Mood</p>
+        <div class="flex justify-center gap-1">
+            {% for i in range(5) %}
+            <button class="{% if progress.performance_metrics.mood >= i + 1 %}text-yellow-500{% else %}text-gray-300{% endif %} hover:text-yellow-500 transition-colors"
+                    hx-post="/api/update-metric"
+                    hx-vals='{"metric": "mood", "value": {{ i + 1 }}}'
+                    hx-target="#metrics-section"
+                    hx-swap="outerHTML"
+                    hx-trigger="click">
+                <i data-lucide="{% if progress.performance_metrics.mood >= i + 1 %}star-fill{% else %}star{% endif %}" class="w-5 h-5 fill-current"></i>
+            </button>
+            {% endfor %}
+        </div>
+    </div>
+</div>

@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}Weekly Shopping List - Body Systems Tracker{% endblock %}
+
+{% block content %}
+<div class="max-w-lg mx-auto px-4 py-6">
+    <!-- Header -->
+    <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <h2 class="text-2xl font-bold text-gray-900 mb-2">
+            <i data-lucide="shopping-cart" class="inline w-6 h-6 mr-2 text-indigo-600"></i>
+            Weekly Shopping List
+        </h2>
+        <p class="text-gray-600">
+            Complete shopping list for your 7-day body systems rotation
+        </p>
+        
+        <!-- Export Button -->
+        <div class="mt-4 flex gap-3">
+            <button class="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 
+                         transition-colors flex items-center justify-center gap-2"
+                    onclick="exportList()">
+                <i data-lucide="download" class="w-4 h-4"></i>
+                Export for Instacart
+            </button>
+            <button class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg 
+                         hover:bg-gray-50 transition-colors"
+                    onclick="copyList()">
+                <i data-lucide="copy" class="w-4 h-4"></i>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Shopping Categories -->
+    {% for category, items in shopping_list.items() %}
+        {% if items %}
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-4">
+            <h3 class="font-semibold text-lg mb-3 capitalize flex items-center">
+                {% if category == "produce" %}
+                    <i data-lucide="carrot" class="w-5 h-5 mr-2 text-green-600"></i>
+                {% elif category == "proteins" %}
+                    <i data-lucide="fish" class="w-5 h-5 mr-2 text-red-600"></i>
+                {% elif category == "pantry" %}
+                    <i data-lucide="package" class="w-5 h-5 mr-2 text-yellow-600"></i>
+                {% elif category == "supplements" %}
+                    <i data-lucide="pill" class="w-5 h-5 mr-2 text-purple-600"></i>
+                {% elif category == "beverages" %}
+                    <i data-lucide="coffee" class="w-5 h-5 mr-2 text-blue-600"></i>
+                {% endif %}
+                {{ category }}
+                <span class="ml-auto text-sm text-gray-500">{{ items|length }} items</span>
+            </h3>
+            
+            <ul class="space-y-2">
+                {% for item in items %}
+                <li class="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+                    <label class="flex items-center flex-1 cursor-pointer">
+                        <input type="checkbox" class="mr-3 h-4 w-4 text-indigo-600 rounded 
+                                                      focus:ring-indigo-500 cursor-pointer">
+                        <span class="text-gray-700">{{ item }}</span>
+                    </label>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+    {% endfor %}
+    
+    <!-- Settings -->
+    <div class="bg-white rounded-lg shadow-sm p-6">
+        <h3 class="font-semibold text-lg mb-3 flex items-center">
+            <i data-lucide="settings" class="w-5 h-5 mr-2 text-gray-600"></i>
+            Shopping Settings
+        </h3>
+        
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Household Size
+                </label>
+                <input type="number" value="{{ settings.household_size }}" min="1" max="10"
+                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none 
+                              focus:ring-2 focus:ring-indigo-500">
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Average Cannabis Sessions/Day
+                </label>
+                <input type="number" value="{{ settings.average_cannabis_sessions }}" min="0" max="10" step="0.5"
+                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none 
+                              focus:ring-2 focus:ring-indigo-500">
+                <p class="text-xs text-gray-500 mt-1">
+                    Adjusts buffer food quantities in the shopping list
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+async function exportList() {
+    try {
+        const response = await fetch('/api/shopping-list/export');
+        const data = await response.json();
+        
+        // Create text list
+        const textList = data.items.join('\n');
+        
+        // Download as text file
+        const blob = new Blob([textList], { type: 'text/plain' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'body-systems-shopping-list.txt';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        
+        // Show success message
+        alert('Shopping list exported! You can now upload this to Instacart.');
+    } catch (error) {
+        alert('Error exporting list: ' + error.message);
+    }
+}
+
+async function copyList() {
+    try {
+        const response = await fetch('/api/shopping-list/export');
+        const data = await response.json();
+        
+        // Create text list
+        const textList = data.items.join('\n');
+        
+        // Copy to clipboard
+        await navigator.clipboard.writeText(textList);
+        
+        // Show success message
+        alert('Shopping list copied to clipboard!');
+    } catch (error) {
+        alert('Error copying list: ' + error.message);
+    }
+}
+</script>
+{% endblock %}

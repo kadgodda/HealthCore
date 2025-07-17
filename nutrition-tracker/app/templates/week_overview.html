@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}Week Overview - Body Systems Tracker{% endblock %}
+
+{% block content %}
+<div class="max-w-lg mx-auto px-4 py-6">
+    <!-- Header -->
+    <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <div class="flex items-center justify-between mb-2">
+            <h2 class="text-2xl font-bold text-gray-900">
+                <i data-lucide="calendar" class="inline w-6 h-6 mr-2 text-indigo-600"></i>
+                Week Overview
+            </h2>
+            <a href="/" class="text-sm text-indigo-600 hover:text-indigo-800">
+                Back to Today
+            </a>
+        </div>
+        <p class="text-gray-600">{{ week_start }} - {{ week_end }}</p>
+    </div>
+    
+    <!-- Week Grid -->
+    <div class="space-y-3">
+        {% for day_data in week_data %}
+        <a href="/?day={{ day_data.day_name.lower() }}" 
+           class="block bg-white rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow
+                  {% if day_data.is_today %}ring-2 ring-indigo-600{% endif %}">
+            <div class="flex items-center justify-between">
+                <div class="flex-1">
+                    <div class="flex items-center mb-2">
+                        <span class="text-2xl mr-3">{{ day_data.system.emoji }}</span>
+                        <div>
+                            <h3 class="font-semibold text-gray-900">
+                                {{ day_data.day_name }}
+                                {% if day_data.is_today %}
+                                <span class="ml-2 text-xs bg-indigo-600 text-white px-2 py-1 rounded">Today</span>
+                                {% endif %}
+                            </h3>
+                            <p class="text-sm text-gray-600">{{ day_data.system.title }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-4">
+                        <!-- Progress Bar -->
+                        <div class="flex-1 bg-gray-200 rounded-full h-2">
+                            <div class="bg-system-{{ day_data.system.color }} h-2 rounded-full" 
+                                 style="width: {{ day_data.progress.completion_percentage }}%"></div>
+                        </div>
+                        <span class="text-sm font-medium text-gray-700">
+                            {{ "%.0f"|format(day_data.progress.completion_percentage) }}%
+                        </span>
+                    </div>
+                    
+                    <!-- Quick Stats -->
+                    <div class="mt-2 flex gap-4 text-xs text-gray-500">
+                        <span>
+                            <i data-lucide="target" class="inline w-3 h-3"></i>
+                            {{ day_data.progress.targets_data|length }} targets
+                        </span>
+                        {% if day_data.progress.cannabis_sessions > 0 %}
+                        <span>
+                            <i data-lucide="leaf" class="inline w-3 h-3"></i>
+                            {{ day_data.progress.cannabis_sessions }} sessions
+                        </span>
+                        {% endif %}
+                        {% if day_data.progress.performance_metrics.energy > 0 %}
+                        <span>
+                            <i data-lucide="star" class="inline w-3 h-3"></i>
+                            Energy: {{ day_data.progress.performance_metrics.energy }}/5
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400 ml-4"></i>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    
+    <!-- Body Systems Reference -->
+    <div class="bg-white rounded-lg shadow-sm p-6 mt-6">
+        <h3 class="font-semibold text-lg mb-4">Body Systems Schedule</h3>
+        <div class="space-y-3 text-sm">
+            {% for day_data in week_data %}
+            <div class="flex items-start">
+                <span class="text-xl mr-3">{{ day_data.system.emoji }}</span>
+                <div>
+                    <p class="font-medium text-gray-900">{{ day_data.day_name }}: {{ day_data.system.system|title }}</p>
+                    <p class="text-gray-600">{{ day_data.system.goal }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

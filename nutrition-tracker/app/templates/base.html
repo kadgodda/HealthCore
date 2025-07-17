@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>{% block title %}Body Systems Nutrition Tracker{% endblock %}</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- PWA -->
+    <link rel="manifest" href="/static/manifest.json">
+    <meta name="theme-color" content="#4F46E5">
+    <link rel="apple-touch-icon" href="/static/icon-192.png">
+    
+    <!-- Custom Styles -->
+    <style>
+        /* Smooth transitions */
+        .htmx-swapping {
+            opacity: 0;
+            transition: opacity 0.3s ease-out;
+        }
+        
+        /* Progress bar animation */
+        .progress-bar {
+            transition: width 0.5s ease-out;
+        }
+        
+        /* Mobile tap highlight */
+        button {
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Custom colors for each body system */
+        .system-red { color: #DC2626; }
+        .system-green { color: #16A34A; }
+        .system-orange { color: #EA580C; }
+        .system-purple { color: #9333EA; }
+        .system-yellow { color: #CA8A04; }
+        .system-gold { color: #D97706; }
+        .system-pink { color: #EC4899; }
+        
+        .bg-system-red { background-color: #DC2626; }
+        .bg-system-green { background-color: #16A34A; }
+        .bg-system-orange { background-color: #EA580C; }
+        .bg-system-purple { background-color: #9333EA; }
+        .bg-system-yellow { background-color: #CA8A04; }
+        .bg-system-gold { background-color: #D97706; }
+        .bg-system-pink { background-color: #EC4899; }
+        
+        .border-system-red { border-color: #DC2626; }
+        .border-system-green { border-color: #16A34A; }
+        .border-system-orange { border-color: #EA580C; }
+        .border-system-purple { border-color: #9333EA; }
+        .border-system-yellow { border-color: #CA8A04; }
+        .border-system-gold { border-color: #D97706; }
+        .border-system-pink { border-color: #EC4899; }
+    </style>
+    
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-lg mx-auto px-4 py-3 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-gray-900">Body Systems Tracker</h1>
+            <nav class="flex gap-4">
+                <a href="/" class="text-gray-600 hover:text-gray-900">
+                    <i data-lucide="home" class="w-5 h-5"></i>
+                </a>
+                <a href="/week-overview" class="text-gray-600 hover:text-gray-900">
+                    <i data-lucide="calendar" class="w-5 h-5"></i>
+                </a>
+                <a href="/shopping-list" class="text-gray-600 hover:text-gray-900">
+                    <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+                </a>
+            </nav>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main class="flex-1">
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Initialize Lucide Icons -->
+    <script>
+        // Check if HTMX loaded
+        if (typeof htmx !== 'undefined') {
+            console.log('HTMX loaded successfully');
+            htmx.logAll(); // Enable HTMX logging
+        } else {
+            console.error('HTMX failed to load!');
+        }
+        
+        lucide.createIcons();
+        
+        // Re-initialize icons after HTMX swaps
+        document.body.addEventListener('htmx:afterSwap', function(evt) {
+            console.log('HTMX swap completed:', evt.detail);
+            lucide.createIcons();
+        });
+        
+        // Log HTMX requests
+        document.body.addEventListener('htmx:beforeRequest', function(evt) {
+            console.log('HTMX request starting:', evt.detail);
+        });
+        
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/static/sw.js').catch(err => {
+                    console.log('Service worker registration failed:', err);
+                });
+            });
+        }
+    </script>
+    
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

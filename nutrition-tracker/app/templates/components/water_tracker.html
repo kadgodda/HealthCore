@@ -1,0 +1,71 @@
+<div class="bg-white rounded-lg shadow-sm p-6 mb-6" id="water-section">
+    <h3 class="text-lg font-semibold mb-4 flex items-center">
+        <i data-lucide="droplet" class="w-5 h-5 mr-2 text-blue-600"></i>
+        Water Intake
+    </h3>
+    
+    <div class="flex items-center justify-between mb-4">
+        <div>
+            <p class="text-2xl font-bold text-blue-600">
+                {{ progress.water_glasses }} / {{ progress.water_goal }} glasses
+            </p>
+            <p class="text-sm text-gray-600">
+                {% if progress.water_goal > 8 %}
+                    {% if system.system == "detox" %}
+                        +2 for detox support
+                    {% elif system.system == "cardiovascular" %}
+                        +1 for circulation
+                    {% endif %}
+                    {% if progress.cannabis_sessions > 0 %}
+                        +{{ progress.cannabis_sessions }} for cannabis hydration
+                    {% endif %}
+                {% else %}
+                    Daily hydration goal
+                {% endif %}
+            </p>
+        </div>
+        
+        <div class="flex gap-2">
+            {% if progress.water_glasses > 0 %}
+            <button class="w-10 h-10 rounded-full bg-red-100 hover:bg-red-200 text-red-600 
+                         flex items-center justify-center transition-colors"
+                    hx-post="/api/update-water"
+                    hx-vals='{"action": "decrement"}'
+                    hx-target="#water-section"
+                    hx-swap="outerHTML">
+                <i data-lucide="minus" class="w-4 h-4"></i>
+            </button>
+            {% endif %}
+            
+            <button class="w-10 h-10 rounded-full bg-blue-100 hover:bg-blue-200 text-blue-600 
+                         flex items-center justify-center transition-colors"
+                    hx-post="/api/update-water"
+                    hx-vals='{"action": "increment"}'
+                    hx-target="#water-section"
+                    hx-swap="outerHTML">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Water Progress Bar -->
+    <div class="w-full bg-gray-200 rounded-full h-3">
+        <div class="bg-blue-600 h-3 rounded-full transition-all duration-300" 
+             style="width: {{ (progress.water_glasses / progress.water_goal * 100) if progress.water_goal > 0 else 0 }}%"></div>
+    </div>
+    
+    <!-- Visual Water Glasses -->
+    <div class="mt-4 flex flex-wrap gap-2">
+        {% for i in range(progress.water_goal) %}
+        <div class="w-8 h-8 rounded-lg flex items-center justify-center
+                    {% if i < progress.water_glasses %}
+                    bg-blue-100 text-blue-600
+                    {% else %}
+                    bg-gray-100 text-gray-400
+                    {% endif %}">
+            <i data-lucide="{% if i < progress.water_glasses %}droplet{% else %}circle{% endif %}" 
+               class="w-4 h-4 {% if i < progress.water_glasses %}fill-current{% endif %}"></i>
+        </div>
+        {% endfor %}
+    </div>
+</div>

@@ -1,0 +1,387 @@
+{
+  "version": "1.0.0",
+  "extends": "anteacore-enum-registry-v2",
+  "metadata": {
+    "domain": "healthcore",
+    "description": "Nutrition tracking and body system optimization enums",
+    "categories": {
+      "health_system": "Core health and body system enums",
+      "tracking": "Food and behavior tracking enums",
+      "user": "User-related state and preferences",
+      "integration": "External service integration enums"
+    }
+  },
+  "enums": {
+    "BodySystem": {
+      "type": "enum",
+      "category": "health_system",
+      "description": "Daily body system focus areas",
+      "strict": true,
+      "values": [
+        {
+          "key": "CARDIOVASCULAR",
+          "value": "cardiovascular",
+          "description": "Heart and blood vessel health",
+          "display_name": "Heart & Energy",
+          "emoji": "❤️",
+          "day_of_week": 1,
+          "color": "#FF6B6B"
+        },
+        {
+          "key": "DETOX",
+          "value": "detox",
+          "description": "Liver and kidney cleansing",
+          "display_name": "Cleanse & Clear",
+          "emoji": "🧹",
+          "day_of_week": 2,
+          "color": "#4ECDC4"
+        },
+        {
+          "key": "BRAIN",
+          "value": "brain",
+          "description": "Cognitive function and neuroplasticity",
+          "display_name": "Brain Power",
+          "emoji": "🧠",
+          "day_of_week": 3,
+          "color": "#6C5CE7"
+        },
+        {
+          "key": "IMMUNE",
+          "value": "immune",
+          "description": "Immune system support",
+          "display_name": "Immunity Shield",
+          "emoji": "🛡️",
+          "day_of_week": 4,
+          "color": "#FFA502"
+        },
+        {
+          "key": "DIGESTIVE",
+          "value": "digestive",
+          "description": "Gut health and microbiome",
+          "display_name": "Gut Garden",
+          "emoji": "🦠",
+          "day_of_week": 5,
+          "color": "#A8E6CF"
+        },
+        {
+          "key": "RECOVERY",
+          "value": "recovery",
+          "description": "Rest and cellular regeneration",
+          "display_name": "Rest & Restore",
+          "emoji": "🔄",
+          "day_of_week": [6, 7],
+          "color": "#DDA0DD"
+        }
+      ]
+    },
+    "FoodTrackingStatus": {
+      "type": "enum",
+      "category": "tracking",
+      "description": "Status of food consumption tracking",
+      "strict": true,
+      "values": [
+        {
+          "key": "PLANNED",
+          "value": "planned",
+          "description": "Food is on today's list but not consumed"
+        },
+        {
+          "key": "CONSUMED",
+          "value": "consumed",
+          "description": "Food has been eaten"
+        },
+        {
+          "key": "SKIPPED",
+          "value": "skipped",
+          "description": "User actively chose not to eat this"
+        },
+        {
+          "key": "SUBSTITUTED",
+          "value": "substituted",
+          "description": "Replaced with equivalent food"
+        }
+      ],
+      "transitions": {
+        "PLANNED": ["CONSUMED", "SKIPPED", "SUBSTITUTED"],
+        "CONSUMED": ["PLANNED"],
+        "SKIPPED": ["PLANNED", "CONSUMED"],
+        "SUBSTITUTED": ["PLANNED"]
+      }
+    },
+    "DailyRecordStatus": {
+      "type": "enum",
+      "category": "tracking",
+      "description": "Daily tracking record lifecycle states",
+      "strict": true,
+      "values": [
+        {
+          "key": "ACTIVE",
+          "value": "active",
+          "description": "Today's record, actively being tracked"
+        },
+        {
+          "key": "COMPLETED",
+          "value": "completed",
+          "description": "User marked day as complete"
+        },
+        {
+          "key": "AUTO_FINALIZED",
+          "value": "auto_finalized",
+          "description": "System finalized at day end"
+        },
+        {
+          "key": "ARCHIVED",
+          "value": "archived",
+          "description": "Historical record, read-only"
+        }
+      ],
+      "transitions": {
+        "ACTIVE": ["COMPLETED", "AUTO_FINALIZED"],
+        "COMPLETED": ["ARCHIVED"],
+        "AUTO_FINALIZED": ["ARCHIVED"]
+      }
+    },
+    "NutrientPriority": {
+      "type": "enum",
+      "category": "health_system",
+      "description": "Importance level of nutrients for body systems",
+      "strict": true,
+      "values": [
+        {
+          "key": "CRITICAL",
+          "value": "critical",
+          "description": "Essential for system function",
+          "multiplier": 2.0,
+          "color": "#FF4757"
+        },
+        {
+          "key": "IMPORTANT",
+          "value": "important",
+          "description": "Significantly beneficial",
+          "multiplier": 1.5,
+          "color": "#FFA502"
+        },
+        {
+          "key": "BENEFICIAL",
+          "value": "beneficial",
+          "description": "Helpful but not essential",
+          "multiplier": 1.0,
+          "color": "#32CC88"
+        }
+      ]
+    },
+    "CannabisSessionType": {
+      "type": "enum",
+      "category": "tracking",
+      "description": "Type of cannabis consumption session",
+      "strict": true,
+      "values": [
+        {
+          "key": "MICRO",
+          "value": "micro",
+          "description": "Microdose (<5mg THC)",
+          "duration_hours": 2
+        },
+        {
+          "key": "LIGHT",
+          "value": "light",
+          "description": "Light session (5-15mg THC)",
+          "duration_hours": 4
+        },
+        {
+          "key": "MODERATE",
+          "value": "moderate",
+          "description": "Moderate session (15-30mg THC)",
+          "duration_hours": 6
+        },
+        {
+          "key": "HEAVY",
+          "value": "heavy",
+          "description": "Heavy session (>30mg THC)",
+          "duration_hours": 8
+        }
+      ]
+    },
+    "ProgressFeedbackType": {
+      "type": "enum",
+      "category": "tracking",
+      "description": "Types of progress feedback shown to users",
+      "strict": true,
+      "values": [
+        {
+          "key": "IMMEDIATE",
+          "value": "immediate",
+          "description": "Instant feedback on food logging"
+        },
+        {
+          "key": "DAILY_SUMMARY",
+          "value": "daily_summary",
+          "description": "End of day analysis"
+        },
+        {
+          "key": "WEEKLY_INSIGHT",
+          "value": "weekly_insight",
+          "description": "Weekly pattern analysis"
+        },
+        {
+          "key": "ACHIEVEMENT",
+          "value": "achievement",
+          "description": "Milestone reached"
+        }
+      ]
+    },
+    "UserActivityLevel": {
+      "type": "enum",
+      "category": "user",
+      "description": "Physical activity level for requirement calculations",
+      "strict": true,
+      "values": [
+        {
+          "key": "SEDENTARY",
+          "value": "sedentary",
+          "description": "Little to no exercise",
+          "multiplier": 1.2
+        },
+        {
+          "key": "LIGHTLY_ACTIVE",
+          "value": "lightly_active",
+          "description": "Exercise 1-3 days/week",
+          "multiplier": 1.375
+        },
+        {
+          "key": "MODERATELY_ACTIVE",
+          "value": "moderately_active",
+          "description": "Exercise 3-5 days/week",
+          "multiplier": 1.55
+        },
+        {
+          "key": "VERY_ACTIVE",
+          "value": "very_active",
+          "description": "Exercise 6-7 days/week",
+          "multiplier": 1.725
+        },
+        {
+          "key": "EXTREMELY_ACTIVE",
+          "value": "extremely_active",
+          "description": "Physical job or 2x daily training",
+          "multiplier": 1.9
+        }
+      ]
+    },
+    "MeasurementUnit": {
+      "type": "enum",
+      "category": "health_system",
+      "description": "Units for nutrient measurements",
+      "strict": true,
+      "values": [
+        {
+          "key": "MILLIGRAMS",
+          "value": "mg",
+          "description": "Milligrams"
+        },
+        {
+          "key": "GRAMS",
+          "value": "g",
+          "description": "Grams"
+        },
+        {
+          "key": "MICROGRAMS",
+          "value": "mcg",
+          "description": "Micrograms"
+        },
+        {
+          "key": "INTERNATIONAL_UNITS",
+          "value": "iu",
+          "description": "International Units"
+        },
+        {
+          "key": "CUPS",
+          "value": "cups",
+          "description": "Cups (volume)"
+        },
+        {
+          "key": "SERVINGS",
+          "value": "servings",
+          "description": "Standard servings"
+        }
+      ]
+    },
+    "ShoppingListStatus": {
+      "type": "enum",
+      "category": "integration",
+      "description": "Status of generated shopping lists",
+      "strict": true,
+      "values": [
+        {
+          "key": "DRAFT",
+          "value": "draft",
+          "description": "Being generated"
+        },
+        {
+          "key": "READY",
+          "value": "ready",
+          "description": "Ready for user review"
+        },
+        {
+          "key": "APPROVED",
+          "value": "approved",
+          "description": "User approved"
+        },
+        {
+          "key": "SENT_TO_INSTACART",
+          "value": "sent_to_instacart",
+          "description": "Pushed to Instacart"
+        },
+        {
+          "key": "ORDERED",
+          "value": "ordered",
+          "description": "User completed order"
+        }
+      ],
+      "transitions": {
+        "DRAFT": ["READY"],
+        "READY": ["APPROVED", "DRAFT"],
+        "APPROVED": ["SENT_TO_INSTACART"],
+        "SENT_TO_INSTACART": ["ORDERED"]
+      }
+    },
+    "AgentTaskType": {
+      "type": "enum",
+      "category": "health_system",
+      "description": "HealthCore agent task types",
+      "strict": true,
+      "values": [
+        {
+          "key": "ANALYZE_DAILY_INTAKE",
+          "value": "analyze_daily_intake",
+          "description": "Analyze user's daily food consumption"
+        },
+        {
+          "key": "CALCULATE_REQUIREMENTS",
+          "value": "calculate_requirements",
+          "description": "Calculate personalized nutrient requirements"
+        },
+        {
+          "key": "GENERATE_FOOD_RECOMMENDATIONS",
+          "value": "generate_food_recommendations",
+          "description": "Create daily food recommendations"
+        },
+        {
+          "key": "CREATE_SHOPPING_LIST",
+          "value": "create_shopping_list",
+          "description": "Generate weekly shopping list"
+        },
+        {
+          "key": "PROCESS_CANNABIS_ADJUSTMENT",
+          "value": "process_cannabis_adjustment",
+          "description": "Adjust requirements for cannabis use"
+        },
+        {
+          "key": "GENERATE_PROGRESS_INSIGHT",
+          "value": "generate_progress_insight",
+          "description": "Create personalized progress feedback"
+        }
+      ]
+    }
+  }
+}

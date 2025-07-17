@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block title %}{{ system.title }} - Body Systems Tracker{% endblock %}
+
+{% block content %}
+<div class="max-w-lg mx-auto px-4 py-6">
+    <!-- Day Navigation -->
+    <div class="bg-white rounded-lg shadow-sm p-3 mb-4">
+        <div class="flex justify-between items-center">
+            <a href="/week-overview" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center">
+                <i data-lucide="calendar" class="w-4 h-4 mr-1"></i>
+                Week View
+            </a>
+            <div class="flex gap-1 overflow-x-auto">
+                {% set days_map = {"Mon": "monday", "Tue": "tuesday", "Wed": "wednesday", "Thu": "thursday", "Fri": "friday", "Sat": "saturday", "Sun": "sunday"} %}
+                {% for abbr, full_day in days_map.items() %}
+                <a href="/?day={{ full_day }}" 
+                   class="px-3 py-1 text-xs rounded-lg transition-colors
+                          {% if current_day == full_day %}
+                          bg-indigo-600 text-white
+                          {% else %}
+                          bg-gray-100 text-gray-700 hover:bg-gray-200
+                          {% endif %}">
+                    {{ abbr }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Date and System Header -->
+    <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <div class="flex items-center justify-between mb-4">
+            <div>
+                <p class="text-sm text-gray-500">{{ display_date }}</p>
+                <h2 class="text-2xl font-bold system-{{ system.color }}">
+                    <span class="text-3xl mr-2">{{ system.emoji }}</span>
+                    {{ system.title }}
+                </h2>
+            </div>
+            <div class="text-center">
+                <div class="text-3xl font-bold system-{{ system.color }}">
+                    {{ "%.0f"|format(progress.completion_percentage) }}%
+                </div>
+                <p class="text-xs text-gray-500">Complete</p>
+            </div>
+        </div>
+        
+        <!-- Progress Bar -->
+        <div class="w-full bg-gray-200 rounded-full h-3 mb-4">
+            <div class="progress-bar bg-system-{{ system.color }} h-3 rounded-full" 
+                 style="width: {{ progress.completion_percentage }}%"></div>
+        </div>
+        
+        <!-- Goal and Benefits -->
+        <div class="space-y-2">
+            <p class="text-sm text-gray-700">
+                <span class="font-semibold">Goal:</span> {{ system.goal }}
+            </p>
+            <p class="text-sm text-gray-700">
+                <span class="font-semibold">Benefits:</span> {{ system.benefit }}
+            </p>
+        </div>
+    </div>
+    
+    <!-- Food Targets Section -->
+    <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <h3 class="text-lg font-semibold mb-4 flex items-center">
+            <i data-lucide="target" class="w-5 h-5 mr-2 system-{{ system.color }}"></i>
+            Today's Food Targets
+        </h3>
+        
+        <div class="space-y-4">
+            {% for target_id, target in progress.targets_data.items() %}
+                {% include "components/food_target.html" %}
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- Water and Cannabis Section -->
+    <div id="water-and-cannabis-section">
+        {% include "components/water_tracker.html" %}
+        {% include "components/cannabis_tracker.html" %}
+    </div>
+    
+    <!-- Performance Metrics -->
+    <div class="bg-white rounded-lg shadow-sm p-6">
+        <h3 class="text-lg font-semibold mb-4 flex items-center">
+            <i data-lucide="bar-chart-3" class="w-5 h-5 mr-2 system-{{ system.color }}"></i>
+            How are you feeling?
+        </h3>
+        
+        <div class="grid grid-cols-3 gap-4" id="metrics-section">
+            <div class="text-center">
+                <p class="text-sm text-gray-600 mb-2">Energy</p>
+                <div class="flex justify-center gap-1">
+                    {% for i in range(5) %}
+                    <button class="{% if progress.performance_metrics.energy >= i + 1 %}text-yellow-500{% else %}text-gray-300{% endif %} hover:text-yellow-500 transition-colors"
+                            hx-post="/api/update-metric"
+                            hx-vals='{"metric": "energy", "value": {{ i + 1 }}}'
+                            hx-target="#metrics-section"
+                            hx-swap="outerHTML">
+                        <i data-lucide="{% if progress.performance_metrics.energy >= i + 1 %}star-fill{% else %}star{% endif %}" class="w-5 h-5 fill-current"></i>
+                    </button>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <p class="text-sm text-gray-600 mb-2">Focus</p>
+                <div class="flex justify-center gap-1">
+                    {% for i in range(5) %}
+                    <button class="{% if progress.performance_metrics.focus >= i + 1 %}text-yellow-500{% else %}text-gray-300{% endif %} hover:text-yellow-500 transition-colors"
+                            hx-post="/api/update-metric"
+                            hx-vals='{"metric": "focus", "value": {{ i + 1 }}}'
+                            hx-target="#metrics-section"
+                            hx-swap="outerHTML">
+                        <i data-lucide="{% if progress.performance_metrics.focus >= i + 1 %}star-fill{% else %}star{% endif %}" class="w-5 h-5 fill-current"></i>
+                    </button>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <p class="text-sm text-gray-600 mb-2">Mood</p>
+                <div class="flex justify-center gap-1">
+                    {% for i in range(5) %}
+                    <button class="{% if progress.performance_metrics.mood >= i + 1 %}text-yellow-500{% else %}text-gray-300{% endif %} hover:text-yellow-500 transition-colors"
+                            hx-post="/api/update-metric"
+                            hx-vals='{"metric": "mood", "value": {{ i + 1 }}}'
+                            hx-target="#metrics-section"
+                            hx-swap="outerHTML">
+                        <i data-lucide="{% if progress.performance_metrics.mood >= i + 1 %}star-fill{% else %}star{% endif %}" class="w-5 h-5 fill-current"></i>
+                    </button>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

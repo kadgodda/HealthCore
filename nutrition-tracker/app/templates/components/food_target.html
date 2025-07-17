@@ -1,0 +1,42 @@
+<div class="border border-gray-200 rounded-lg p-4 hover:border-system-{{ system_color }} transition-colors"
+     id="target-{{ target_id }}">
+    <div class="flex justify-between items-center">
+        <div class="flex-1">
+            <h4 class="font-medium text-gray-900">{{ target.name }}</h4>
+            <p class="text-sm text-gray-600">
+                {{ target.examples|join(', ') }}
+            </p>
+            <div class="mt-2 flex items-center">
+                <div class="flex-1 bg-gray-200 rounded-full h-2 mr-3">
+                    <div class="bg-system-{{ system_color }} h-2 rounded-full transition-all duration-300"
+                         style="width: {{ (target.completed / target.amount * 100) if target.amount > 0 else 0 }}%"></div>
+                </div>
+                <span class="text-sm font-medium text-gray-700">
+                    {{ target.completed }}/{{ target.amount }} {{ target.unit }}
+                </span>
+            </div>
+        </div>
+        
+        <div class="flex items-center gap-2 ml-4">
+            <button class="w-10 h-10 rounded-full bg-red-100 hover:bg-red-200 text-red-600 
+                         flex items-center justify-center transition-colors"
+                    hx-post="/api/update-target"
+                    hx-vals='{"target_id": "{{ target_id }}", "increment": "-1"}'
+                    hx-target="#target-{{ target_id }}"
+                    hx-swap="outerHTML"
+                    hx-trigger="click">
+                <i data-lucide="minus" class="w-4 h-4"></i>
+            </button>
+            
+            <button class="w-10 h-10 rounded-full bg-green-100 hover:bg-green-200 text-green-600 
+                         flex items-center justify-center transition-colors"
+                    hx-post="/api/update-target"
+                    hx-vals='{"target_id": "{{ target_id }}", "increment": "1"}'
+                    hx-target="#target-{{ target_id }}"
+                    hx-swap="outerHTML"
+                    hx-trigger="click">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+            </button>
+        </div>
+    </div>
+</div>
