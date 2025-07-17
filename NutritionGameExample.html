@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthCore Nutrition Game - Daily Receptor Dashboard</title>
+    <style>
+        /* HealthCore Design System Variables */
+        :root {
+            --brand-primary: #4f46e5;
+            --brand-secondary: #8b5cf6;
+            --brand-accent: #ec4899;
+            
+            --theme-bg-primary: #0a0e27;
+            --theme-bg-secondary: #151a35;
+            --theme-bg-elevated: #1e2442;
+            --theme-bg-overlay: rgba(10, 14, 39, 0.95);
+            
+            --theme-text-primary: #e2e8f0;
+            --theme-text-secondary: #94a3b8;
+            --theme-text-tertiary: #64748b;
+            
+            --theme-border: #2d3561;
+            --theme-border-hover: #4a5578;
+            
+            --theme-success: #10b981;
+            --theme-warning: #f59e0b;
+            --theme-error: #ef4444;
+            
+            --space-1: 0.25rem;
+            --space-2: 0.5rem;
+            --space-3: 0.75rem;
+            --space-4: 1rem;
+            --space-5: 1.25rem;
+            --space-6: 1.5rem;
+            --space-8: 2rem;
+            
+            --radius-lg: 0.5rem;
+            --radius-xl: 0.75rem;
+            
+            --text-xs: 0.75rem;
+            --text-sm: 0.875rem;
+            --text-base: 1rem;
+            --text-lg: 1.125rem;
+            --text-xl: 1.25rem;
+            --text-2xl: 1.5rem;
+            --text-3xl: 1.875rem;
+            
+            --font-medium: 500;
+            --font-semibold: 600;
+            --font-bold: 700;
+            
+            --transition-fast: 150ms ease;
+            --transition-normal: 250ms ease;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--theme-bg-primary);
+            color: var(--theme-text-primary);
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--space-6);
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-8);
+        }
+        
+        .header-title {
+            font-size: var(--text-3xl);
+            font-weight: var(--font-bold);
+            background: linear-gradient(45deg, var(--brand-primary), var(--brand-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .score-badge {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-3) var(--space-4);
+            background: var(--theme-bg-elevated);
+            border: 1px solid var(--theme-border);
+            border-radius: var(--radius-xl);
+            font-weight: var(--font-semibold);
+        }
+        
+        .medal {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-xs);
+            font-weight: var(--font-bold);
+            background: linear-gradient(45deg, #ffd700, #ffed4a);
+            color: #000;
+        }
+        
+        .window-nav {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-2);
+            margin-bottom: var(--space-6);
+        }
+        
+        .window-btn {
+            padding: var(--space-3) var(--space-4);
+            background: var(--theme-bg-secondary);
+            border: 1px solid var(--theme-border);
+            border-radius: var(--radius-lg);
+            color: var(--theme-text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            text-align: center;
+            font-weight: var(--font-medium);
+        }
+        
+        .window-btn:hover {
+            border-color: var(--theme-border-hover);
+            color: var(--theme-text-primary);
+        }
+        
+        .window-btn.active {
+            background: var(--brand-primary);
+            border-color: var(--brand-primary);
+            color: white;
+        }
+        
+        .window-time {
+            font-size: var(--text-xs);
+            opacity: 0.8;
+        }
+        
+        .level-section {
+            margin-bottom: var(--space-6);
+        }
+        
+        .level-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-4);
+        }
+        
+        .level-title {
+            font-size: var(--text-xl);
+            font-weight: var(--font-semibold);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .level-badge {
+            padding: var(--space-1) var(--space-3);
+            border-radius: var(--radius-lg);
+            font-size: var(--text-xs);
+            font-weight: var(--font-semibold);
+            color: white;
+        }
+        
+        .level-1 { background: var(--theme-success); }
+        .level-2 { background: var(--theme-warning); }
+        .level-3 { background: var(--brand-accent); }
+        
+        .progress-overview {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            font-size: var(--text-sm);
+            color: var(--theme-text-secondary);
+        }
+        
+        .progress-bar {
+            width: 100px;
+            height: 8px;
+            background: var(--theme-bg-primary);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--brand-primary), var(--brand-secondary));
+            transition: width var(--transition-normal);
+        }
+        
+        .mission-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--space-4);
+        }
+        
+        .mission-card {
+            background: var(--theme-bg-secondary);
+            border: 1px solid var(--theme-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            transition: all var(--transition-fast);
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .mission-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+            border-color: var(--theme-border-hover);
+        }
+        
+        .mission-card.completed {
+            border-color: var(--theme-success);
+            background: linear-gradient(135deg, var(--theme-bg-secondary), rgba(16, 185, 129, 0.1));
+        }
+        
+        .mission-card.cannabis-boost {
+            border-color: var(--brand-accent);
+            background: linear-gradient(135deg, var(--theme-bg-secondary), rgba(236, 72, 153, 0.1));
+        }
+        
+        .mission-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-3);
+        }
+        
+        .mission-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-lg);
+            flex-shrink: 0;
+        }
+        
+        .mission-status {
+            padding: var(--space-1) var(--space-2);
+            border-radius: 4px;
+            font-size: var(--text-xs);
+            font-weight: var(--font-semibold);
+            text-transform: uppercase;
+        }
+        
+        .status-completed { background: var(--theme-success); color: white; }
+        .status-active { background: var(--brand-primary); color: white; }
+        .status-locked { background: var(--theme-bg-primary); color: var(--theme-text-tertiary); }
+        
+        .mission-title {
+            font-size: var(--text-base);
+            font-weight: var(--font-semibold);
+            margin-bottom: var(--space-1);
+        }
+        
+        .mission-description {
+            font-size: var(--text-sm);
+            color: var(--theme-text-secondary);
+            margin-bottom: var(--space-3);
+        }
+        
+        .mission-progress {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: var(--text-sm);
+        }
+        
+        .cannabis-effect {
+            position: absolute;
+            top: var(--space-2);
+            right: var(--space-2);
+            padding: var(--space-1) var(--space-2);
+            border-radius: 4px;
+            font-size: var(--text-xs);
+            font-weight: var(--font-semibold);
+            background: var(--brand-accent);
+            color: white;
+        }
+        
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--theme-bg-overlay);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-normal);
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal {
+            background: var(--theme-bg-secondary);
+            border: 1px solid var(--theme-border);
+            border-radius: var(--radius-xl);
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: all var(--transition-normal);
+        }
+        
+        .modal-overlay.active .modal {
+            transform: scale(1);
+        }
+        
+        .modal-header {
+            padding: var(--space-5);
+            border-bottom: 1px solid var(--theme-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-size: var(--text-xl);
+            font-weight: var(--font-semibold);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+        
+        .close-btn {
+            background: var(--theme-bg-primary);
+            border: 1px solid var(--theme-border);
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--theme-text-secondary);
+            transition: all var(--transition-fast);
+        }
+        
+        .close-btn:hover {
+            color: var(--theme-text-primary);
+            border-color: var(--theme-border-hover);
+        }
+        
+        .modal-body {
+            padding: var(--space-5);
+        }
+        
+        .section-title {
+            font-size: var(--text-base);
+            font-weight: var(--font-semibold);
+            margin-bottom: var(--space-3);
+        }
+        
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: var(--space-3);
+            margin-bottom: var(--space-4);
+        }
+        
+        .quick-action-btn {
+            background: var(--theme-bg-primary);
+            border: 1px solid var(--theme-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-3);
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            font-size: var(--text-sm);
+        }
+        
+        .quick-action-btn:hover {
+            border-color: var(--brand-primary);
+            background: rgba(79, 70, 229, 0.1);
+        }
+        
+        .quick-action-btn.selected {
+            background: var(--brand-primary);
+            border-color: var(--brand-primary);
+            color: white;
+        }
+        
+        .suggestion-card {
+            background: var(--theme-bg-elevated);
+            border: 1px solid var(--theme-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            margin-bottom: var(--space-3);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .suggestion-card:hover {
+            border-color: var(--brand-primary);
+        }
+        
+        .suggestion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-2);
+        }
+        
+        .suggestion-title {
+            font-weight: var(--font-semibold);
+        }
+        
+        .suggestion-benefit {
+            font-size: var(--text-xs);
+            padding: var(--space-1) var(--space-2);
+            background: var(--theme-success);
+            color: white;
+            border-radius: 4px;
+            font-weight: var(--font-semibold);
+        }
+        
+        .suggestion-description {
+            font-size: var(--text-sm);
+            color: var(--theme-text-secondary);
+            margin-bottom: var(--space-2);
+        }
+        
+        .suggestion-nutrients {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-1);
+        }
+        
+        .nutrient-tag {
+            font-size: var(--text-xs);
+            padding: var(--space-1) var(--space-2);
+            background: var(--brand-primary);
+            color: white;
+            border-radius: 4px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: var(--space-3);
+            padding-top: var(--space-4);
+            border-top: 1px solid var(--theme-border);
+        }
+        
+        .btn {
+            padding: var(--space-3) var(--space-5);
+            border-radius: var(--radius-lg);
+            font-weight: var(--font-semibold);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            border: none;
+            font-size: var(--text-base);
+            flex: 1;
+        }
+        
+        .btn-primary {
+            background: var(--brand-primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--brand-secondary);
+        }
+        
+        .btn-secondary {
+            background: var(--theme-bg-primary);
+            color: var(--theme-text-primary);
+            border: 1px solid var(--theme-border);
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--theme-border-hover);
+        }
+        
+        /* Level Up Celebration Modal */
+        .celebration-modal {
+            background: linear-gradient(135deg, var(--theme-bg-secondary), var(--theme-bg-elevated));
+            border: 2px solid var(--brand-primary);
+            border-radius: var(--radius-xl);
+            max-width: 600px;
+            width: 90%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .celebration-header {
+            background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+            padding: var(--space-6);
+            text-align: center;
+            position: relative;
+        }
+        
+        .celebration-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.3)"/><circle cx="80" cy="30" r="1.5" fill="rgba(255,255,255,0.2)"/><circle cx="60" cy="70" r="2.5" fill="rgba(255,255,255,0.25)"/><circle cx="30" cy="80" r="1" fill="rgba(255,255,255,0.3)"/><circle cx="90" cy="60" r="2" fill="rgba(255,255,255,0.2)"/></svg>');
+            animation: sparkle 3s ease-in-out infinite;
+        }
+        
+        @keyframes sparkle {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .level-up-badge {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-4);
+            backdrop-filter: blur(10px);
+            animation: levelUpPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes levelUpPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(79, 70, 229, 0.3); }
+            50% { transform: scale(1.05); box-shadow: 0 0 30px rgba(79, 70, 229, 0.5); }
+        }
+        
+        .level-up-icon {
+            font-size: 3rem;
+            margin-bottom: var(--space-1);
+        }
+        
+        .level-up-text {
+            font-size: var(--text-xs);
+            font-weight: var(--font-bold);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .celebration-title {
+            font-size: var(--text-2xl);
+            font-weight: var(--font-bold);
+            color: white;
+            margin-bottom: var(--space-2);
+            position: relative;
+        }
+        
+        .celebration-subtitle {
+            font-size: var(--text-base);
+            color: rgba(255, 255, 255, 0.9);
+            position: relative;
+        }
+        
+        .health-insight {
+            padding: var(--space-6);
+        }
+        
+        .insight-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            margin-bottom: var(--space-4);
+        }
+        
+        .ai-brain {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(45deg, var(--brand-primary), var(--brand-accent));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-xl);
+            animation: brainPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes brainPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .insight-title {
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            color: var(--theme-text-primary);
+        }
+        
+        .insight-content {
+            background: var(--theme-bg-primary);
+            border: 1px solid var(--theme-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            margin-bottom: var(--space-4);
+        }
+        
+        .insight-text {
+            font-size: var(--text-base);
+            line-height: 1.6;
+            color: var(--theme-text-primary);
+            margin-bottom: var(--space-3);
+        }
+        
+        .insight-highlights {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--space-3);
+        }
+        
+        .highlight-item {
+            background: var(--theme-bg-elevated);
+            border: 1px solid var(--theme-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-3);
+            text-align: center;
+        }
+        
+        .highlight-value {
+            font-size: var(--text-lg);
+            font-weight: var(--font-bold);
+            color: var(--brand-primary);
+            margin-bottom: var(--space-1);
+        }
+        
+        .highlight-label {
+            font-size: var(--text-sm);
+            color: var(--theme-text-secondary);
+        }
+        
+        .level-up-btn {
+            background: var(--theme-warning);
+            color: white;
+            padding: var(--space-3) var(--space-6);
+            border-radius: var(--radius-lg);
+            font-weight: var(--font-bold);
+            font-size: var(--text-base);
+            border: none;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            margin: 0 auto;
+            animation: levelUpGlow 2s ease-in-out infinite;
+        }
+        
+        @keyframes levelUpGlow {
+            0%, 100% { box-shadow: 0 0 15px rgba(245, 158, 11, 0.4); }
+            50% { box-shadow: 0 0 25px rgba(245, 158, 11, 0.6); }
+        }
+        
+        .level-up-btn:hover {
+            background: #d97706;
+            transform: translateY(-2px);
+        }
+        
+        .progress-complete {
+            background: var(--theme-success) !important;
+        }
+        
+        .confetti {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        
+        .confetti-piece {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--brand-accent);
+            animation: confettiFall 3s ease-out infinite;
+        }
+        
+        .confetti-piece:nth-child(1) { left: 10%; animation-delay: 0s; background: var(--brand-primary); }
+        .confetti-piece:nth-child(2) { left: 20%; animation-delay: 0.5s; background: var(--brand-secondary); }
+        .confetti-piece:nth-child(3) { left: 30%; animation-delay: 1s; background: var(--brand-accent); }
+        .confetti-piece:nth-child(4) { left: 40%; animation-delay: 1.5s; background: var(--theme-success); }
+        .confetti-piece:nth-child(5) { left: 50%; animation-delay: 2s; background: var(--theme-warning); }
+        .confetti-piece:nth-child(6) { left: 60%; animation-delay: 0.3s; background: var(--brand-primary); }
+        .confetti-piece:nth-child(7) { left: 70%; animation-delay: 0.8s; background: var(--brand-secondary); }
+        .confetti-piece:nth-child(8) { left: 80%; animation-delay: 1.3s; background: var(--brand-accent); }
+        .confetti-piece:nth-child(9) { left: 90%; animation-delay: 1.8s; background: var(--theme-success); }
+        
+        @keyframes confettiFall {
+            0% { 
+                top: -10px; 
+                transform: rotate(0deg); 
+                opacity: 1; 
+            }
+            100% { 
+                top: 100vh; 
+                transform: rotate(720deg); 
+                opacity: 0; 
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container { padding: var(--space-4); }
+            .grid-cols-4 { grid-template-columns: repeat(2, 1fr); }
+            .header { flex-direction: column; gap: var(--space-4); text-align: center; }
+            .mission-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <h1 class="header-title">Daily Receptor Dashboard</h1>
+                <p style="color: var(--theme-text-secondary); margin-top: var(--space-2);">
+                    Wednesday, July 16 • Morning Window Active
+                </p>
+            </div>
+            <div class="score-badge">
+                <div class="medal">🥇</div>
+                <div>
+                    <div style="font-size: var(--text-lg);">847 pts</div>
+                    <div style="font-size: var(--text-xs); color: var(--theme-text-secondary);">5 day streak</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Time Window Navigation -->
+        <div class="window-nav">
+            <button class="window-btn active">
+                <div>🌅 Morning</div>
+                <div class="window-time">6-10 AM</div>
+            </button>
+            <button class="window-btn">
+                <div>☀️ Midday</div>
+                <div class="window-time">10 AM-2 PM</div>
+            </button>
+            <button class="window-btn">
+                <div>🌇 Afternoon</div>
+                <div class="window-time">2-6 PM</div>
+            </button>
+            <button class="window-btn">
+                <div>🌙 Evening</div>
+                <div class="window-time">6-10 PM</div>
+            </button>
+        </div>
+        
+        <!-- Level 1: Foundation -->
+        <div class="level-section">
+            <div class="level-header">
+                <div class="level-title">
+                    <span class="level-badge level-1">Level 1</span>
+                    Foundation Receptors
+                </div>
+                <div class="progress-overview">
+                    <span id="level1-progress">3/4 completed</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="level1-fill" style="width: 75%;"></div>
+                    </div>
+                    <button class="level-up-btn" id="level1-btn" style="display: none;" onclick="triggerLevelUp('Level 1', 'Foundation')">
+                        ⬆️ Level Up!
+                    </button>
+                </div>
+            </div>
+            
+            <div class="mission-grid">
+                <div class="mission-card completed">
+                    <div class="mission-header">
+                        <div class="mission-icon" style="background: var(--theme-success);">💧</div>
+                        <div class="mission-status status-completed">Done</div>
+                    </div>
+                    <div class="mission-title">Hydration Activation</div>
+                    <div class="mission-description">16-20oz water to restart kidney filtration</div>
+                    <div class="mission-progress">
+                        <span style="color: var(--theme-success);">18oz / 16oz</span>
+                        <span style="color: var(--theme-success); font-weight: var(--font-semibold);">+50 pts</span>
+                    </div>
+                </div>
+                
+                <div class="mission-card cannabis-boost" onclick="openModal('iron-modal')">
+                    <div class="cannabis-effect">+15%</div>
+                    <div class="mission-header">
+                        <div class="mission-icon" style="background: var(--theme-error);">⚡</div>
+                        <div class="mission-status status-active">Active</div>
+                    </div>
+                    <div class="mission-title">Iron Loading</div>
+                    <div class="mission-description">Iron + Vitamin C combo when absorption is highest</div>
+                    <div class="mission-progress">
+                        <span>Progress: 60%</span>
+                        <span style="color: var(--brand-primary); font-weight: var(--font-semibold);">+69 pts</span>
+                    </div>
+                </div>
+                
+                <div class="mission-card completed" onclick="openModal('movement-modal')">
+                    <div class="mission-header">
+                        <div class="mission-icon" style="background: var(--theme-success);">🏃</div>
+                        <div class="mission-status status-completed">Done</div>
+                    </div>
+                    <div class="mission-title">Movement Catalyst</div>
+                    <div class="mission-description">10-15 min activity to boost circulation</div>
+                    <div class="mission-progress">
+                        <span style="color: var(--theme-success);">12 minutes</span>
+                        <span style="color: var(--theme-success); font-weight: var(--font-semibold);">+40 pts</span>
+                    </div>
+                </div>
+                
+                <div class="mission-card">
+                    <div class="mission-header">
+                        <div class="mission-icon" style="background: var(--theme-text-tertiary);">🍳</div>
+                        <div class="mission-status status-locked">Pending</div>
+                    </div>
+                    <div class="mission-title">Protein Foundation</div>
+                    <div class="mission-description">Complete amino acid profile for synthesis</div>
+                    <div class="mission-progress">
+                        <span>0% complete</span>
+                        <span style="color: var(--theme-text-tertiary);">60 pts</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Level Up Celebration Modal -->
+    <div class="modal-overlay" id="levelup-modal">
+        <div class="modal celebration-modal">
+            <div class="confetti">
+                <div class="confetti-piece"></div>
+                <div class="confetti-piece"></div>
+                <div class="confetti-piece"></div>
+                <div class="confetti-piece"></div>
+                <div class="confetti-piece"></div>
+                <div class="confetti-piece"></div>
+                <div class="confetti-piece"></div>
+                <div class="confetti-piece"></div>
+                <div class="confetti-piece"></div>
+            </div>
+            <div class="celebration-header">
+                <div class="level-up-badge">
+                    <div class="level-up-icon">🚀</div>
+                    <div class="level-up-text">Level Up!</div>
+                </div>
+                <div class="celebration-title" id="levelup-title">Foundation Master!</div>
+                <div class="celebration-subtitle" id="levelup-subtitle">You've optimized your core receptor systems</div>
+            </div>
+            <div class="health-insight">
+                <div class="insight-header">
+                    <div class="ai-brain">🧠</div>
+                    <div>
+                        <div class="insight-title">Health Insight from HealthCore AI</div>
+                        <div style="font-size: var(--text-sm); color: var(--theme-text-secondary);">
+                            Personalized for your morning achievement
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="insight-content">
+                    <div class="insight-text" id="insight-text">
+                        Amazing! By completing your Foundation level during the morning window, you've triggered a cascade of biological benefits. Your body's cortisol peak (which you optimized with cannabis) has now primed your mineral transporters for maximum absorption. This timing isn't just convenient—it's scientifically strategic.
+                    </div>
+                    
+                    <div class="insight-highlights">
+                        <div class="highlight-item">
+                            <div class="highlight-value" id="highlight1-value">3-5x</div>
+                            <div class="highlight-label" id="highlight1-label">Iron Absorption Boost</div>
+                        </div>
+                        <div class="highlight-item">
+                            <div class="highlight-value" id="highlight2-value">40%</div>
+                            <div class="highlight-label" id="highlight2-label">Energy Increase</div>
+                        </div>
+                        <div class="highlight-item">
+                            <div class="highlight-value" id="highlight3-value">6-8hrs</div>
+                            <div class="highlight-label" id="highlight3-label">Metabolic Advantage</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center;">
+                    <button class="btn btn-primary" onclick="closeModal()" style="padding: var(--space-4) var(--space-6); font-size: var(--text-lg);">
+                        🎯 Continue to Level 2
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Iron Loading Modal -->
+    <div class="modal-overlay" id="iron-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <div class="mission-icon" style="background: var(--theme-error);">⚡</div>
+                    Iron Loading Mission
+                </div>
+                <button class="close-btn" onclick="closeModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <!-- Direct Input Section -->
+                <div style="margin-bottom: var(--space-6);">
+                    <div class="section-title">Direct Entry</div>
+                    <div class="quick-actions">
+                        <div class="quick-action-btn" onclick="selectSupplement(this)">
+                            <div style="font-size: var(--text-lg); margin-bottom: var(--space-1);">💊</div>
+                            <div>Iron Supplement</div>
+                        </div>
+                        <div class="quick-action-btn" onclick="selectSupplement(this)">
+                            <div style="font-size: var(--text-lg); margin-bottom: var(--space-1);">🍊</div>
+                            <div>Vitamin C</div>
+                        </div>
+                        <div class="quick-action-btn" onclick="selectSupplement(this)">
+                            <div style="font-size: var(--text-lg); margin-bottom: var(--space-1);">🥬</div>
+                            <div>Iron-Rich Food</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- AI Suggestions Section -->
+                <div style="margin-bottom: var(--space-6);">
+                    <div class="section-title">🤖 AI-Powered Suggestions</div>
+                    
+                    <div class="suggestion-card">
+                        <div class="suggestion-header">
+                            <div class="suggestion-title">Spinach & Strawberry Smoothie</div>
+                            <div class="suggestion-benefit">+85% absorption</div>
+                        </div>
+                        <div class="suggestion-description">
+                            Perfect iron-vitamin C combo. Strawberries provide 89mg vitamin C to maximize iron uptake.
+                        </div>
+                        <div class="suggestion-nutrients">
+                            <span class="nutrient-tag">Iron 3.2mg</span>
+                            <span class="nutrient-tag">Vitamin C 89mg</span>
+                            <span class="nutrient-tag">Folate 58mcg</span>
+                        </div>
+                    </div>
+                    
+                    <div class="suggestion-card">
+                        <div class="suggestion-header">
+                            <div class="suggestion-title">Cast Iron Cooking + Tomatoes</div>
+                            <div class="suggestion-benefit">+40% iron</div>
+                        </div>
+                        <div class="suggestion-description">
+                            Cook acidic foods in cast iron to increase iron content. Tomato sauce gains 5-17x more iron.
+                        </div>
+                        <div class="suggestion-nutrients">
+                            <span class="nutrient-tag">Iron 5-10mg</span>
+                            <span class="nutrient-tag">Lycopene 2.5mg</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-secondary" onclick="closeModal()">Save for Later</button>
+                    <button class="btn btn-primary" onclick="completeMission()">Complete Mission</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Movement Modal -->
+    <div class="modal-overlay" id="movement-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <div class="mission-icon" style="background: var(--theme-success);">🏃</div>
+                    Movement Catalyst
+                </div>
+                <button class="close-btn" onclick="closeModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div style="background: var(--theme-bg-elevated); padding: var(--space-4); border-radius: var(--radius-lg); margin-bottom: var(--space-4);">
+                    <div style="font-weight: var(--font-semibold); color: var(--theme-success); margin-bottom: var(--space-2);">✓ Mission Completed!</div>
+                    <div style="color: var(--theme-text-secondary); font-size: var(--text-sm);">
+                        12 minutes of morning movement<br>
+                        Time: 7:15 AM<br>
+                        Benefits: Improved circulation, cortisol regulation
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: var(--space-6);">
+                    <div class="section-title">🤖 Build on This Success</div>
+                    
+                    <div class="suggestion-card">
+                        <div class="suggestion-header">
+                            <div class="suggestion-title">Post-Walk Hydration</div>
+                            <div class="suggestion-benefit">+15% absorption</div>
+                        </div>
+                        <div class="suggestion-description">
+                            Your body is primed for nutrient uptake. Add electrolytes to water for optimal hydration.
+                        </div>
+                        <div class="suggestion-nutrients">
+                            <span class="nutrient-tag">Water 16oz</span>
+                            <span class="nutrient-tag">Electrolytes</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-secondary" onclick="closeModal()">View Details</button>
+                    <button class="btn btn-primary" onclick="closeModal()">Awesome!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModal() {
+            document.querySelectorAll('.modal-overlay').forEach(modal => {
+                modal.classList.remove('active');
+            });
+            document.body.style.overflow = '';
+        }
+        
+        function selectSupplement(element) {
+            element.parentNode.querySelectorAll('.quick-action-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            element.classList.add('selected');
+        }
+        
+        function completeMission() {
+            // Simulate completing the iron mission
+            updateLevelProgress('level1', 4, 4);
+            closeModal();
+        }
+        
+        function updateLevelProgress(levelId, completed, total) {
+            const progressSpan = document.getElementById(levelId + '-progress');
+            const progressFill = document.getElementById(levelId + '-fill');
+            const levelBtn = document.getElementById(levelId + '-btn');
+            
+            progressSpan.textContent = `${completed}/${total} completed`;
+            const percentage = (completed / total) * 100;
+            progressFill.style.width = percentage + '%';
+            
+            if (completed === total) {
+                progressFill.classList.add('progress-complete');
+                levelBtn.style.display = 'flex';
+                // Add some celebration animation
+                progressFill.style.animation = 'levelUpGlow 1s ease-in-out 3';
+            }
+        }
+        
+        function triggerLevelUp(levelName, levelType) {
+            const modal = document.getElementById('levelup-modal');
+            const title = document.getElementById('levelup-title');
+            const subtitle = document.getElementById('levelup-subtitle');
+            const insightText = document.getElementById('insight-text');
+            
+            // Customize based on level and time
+            const timeOfDay = 'morning'; // Would be dynamic
+            const levelInsights = {
+                'Level 1': {
+                    title: 'Foundation Master!',
+                    subtitle: "You've optimized your core receptor systems",
+                    insight: `Amazing! By completing your Foundation level during the ${timeOfDay} window, you've triggered a cascade of biological benefits. Your body's cortisol peak (which you optimized with cannabis) has now primed your mineral transporters for maximum absorption. This timing isn't just convenient—it's scientifically strategic.`,
+                    highlights: [
+                        { value: '3-5x', label: 'Iron Absorption Boost' },
+                        { value: '40%', label: 'Energy Increase' },
+                        { value: '6-8hrs', label: 'Metabolic Advantage' }
+                    ]
+                },
+                'Level 2': {
+                    title: 'Optimization Expert!',
+                    subtitle: "Your receptor synergies are firing perfectly",
+                    insight: `Incredible! You've mastered the art of nutrient timing and receptor optimization. The combinations you've chosen create synergistic effects that amplify each other. Your morning cortisol optimization is now supporting afternoon performance, creating a metabolic momentum that will carry you through the day.`,
+                    highlights: [
+                        { value: '60%', label: 'Synergy Bonus' },
+                        { value: '2x', label: 'Bioavailability' },
+                        { value: '12hrs', label: 'Sustained Effect' }
+                    ]
+                },
+                'Level 3': {
+                    title: 'Peak Performance Unlocked!',
+                    subtitle: "You're operating at cellular mastery level",
+                    insight: `Extraordinary! You've achieved peak receptor harmony. Your circadian rhythm is now perfectly synchronized with your nutrient intake, creating optimal conditions for cellular repair, energy production, and longevity pathways. This level of optimization is what separates good health from exceptional vitality.`,
+                    highlights: [
+                        { value: '90%', label: 'Circadian Sync' },
+                        { value: '5x', label: 'Recovery Rate' },
+                        { value: '24hrs', label: 'Full Optimization' }
+                    ]
+                }
+            };
+            
+            const levelData = levelInsights[levelName];
+            title.textContent = levelData.title;
+            subtitle.textContent = levelData.subtitle;
+            insightText.textContent = levelData.insight;
+            
+            // Update highlights
+            levelData.highlights.forEach((highlight, index) => {
+                const valueEl = document.getElementById(`highlight${index + 1}-value`);
+                const labelEl = document.getElementById(`highlight${index + 1}-label`);
+                if (valueEl && labelEl) {
+                    valueEl.textContent = highlight.value;
+                    labelEl.textContent = highlight.label;
+                }
+            });
+            
+            // Show modal with celebration
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Play celebration sound (if available)
+            // new Audio('/celebration-sound.mp3').play().catch(() => {});
+        }
+        
+        // Window navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const windowBtns = document.querySelectorAll('.window-btn');
+            windowBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    windowBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Close modal on outside click
+            document.querySelectorAll('.modal-overlay').forEach(overlay => {
+                overlay.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeModal();
+                    }
+                });
+            });
+            
+            // ESC key to close modals
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

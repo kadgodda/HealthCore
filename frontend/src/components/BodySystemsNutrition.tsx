@@ -49,12 +49,12 @@ const systemData = {
     subtitle: "Nutrient uptake optimization at the molecular level",
     commentary: "Your absorption patterns show excellent iron utilization today. The vitamin C from your morning smoothie created optimal conditions for iron uptake. Consider spacing your calcium supplement 2 hours from iron-rich meals for maximum efficiency."
   },
-  liver: {
+  hepatic: {
     title: "Hepatic Processing Status",
     subtitle: "Metabolic processing and detoxification systems",
     commentary: "Liver enzyme activity is well-supported by your recent B-vitamin intake. Phase II detoxification pathways are functioning optimally. Your omega-3 levels are supporting healthy inflammatory response."
   },
-  blood: {
+  circulatory: {
     title: "Circulatory Transport Status",
     subtitle: "Nutrient delivery and distribution networks",
     commentary: "Nutrient delivery systems are performing well. Your magnesium levels are supporting healthy vascular function. Consider timing your next meal to maintain steady glucose and amino acid levels."
@@ -66,98 +66,395 @@ const systemData = {
   }
 };
 
-const clusterData = [
-  {
-    id: 'iron',
-    name: 'Iron Absorption',
-    icon: '⚡',
-    description: 'Heme and non-heme iron uptake through DMT1 transporters',
-    status: 'optimal',
-    efficiency: 92,
-    factors: {
-      enhancers: ['Vitamin C ✓', 'Empty stomach ✓'],
-      inhibitors: ['Calcium competing']
+// Receptor cluster data for each system based on complete_receptor_mapping.md
+const systemClusterData = {
+  intestinal: [
+    {
+      id: 'iron',
+      name: 'Iron Absorption Complex',
+      icon: '🩸',
+      description: 'DMT1 transporter with Dcytb reduction system for Fe²⁺ uptake',
+      status: 'optimal',
+      efficiency: 92,
+      factors: {
+        enhancers: ['Vitamin C (3-5x ↑)', 'Empty stomach ✓', 'Heme iron bypass'],
+        inhibitors: ['Calcium competition', 'Zinc at DMT1']
+      }
+    },
+    {
+      id: 'calcium',
+      name: 'Calcium Channels',
+      icon: '🦴',
+      description: 'TRPV6 channels with vitamin D₃ regulation and calbindin transport',
+      status: 'good',
+      efficiency: 76,
+      factors: {
+        enhancers: ['Vitamin D₃ active', 'Vitamin K₂ utilization', 'Acidic pH'],
+        inhibitors: ['Magnesium competition', 'Phytate chelation']
+      }
+    },
+    {
+      id: 'b-complex',
+      name: 'B-Vitamin Networks',
+      icon: '🧠',
+      description: 'B₁₂-IF cubilin pathway, RFC1 folate transport, THTR1/2 thiamine',
+      status: 'attention',
+      efficiency: 58,
+      factors: {
+        enhancers: ['Intrinsic Factor ✓', 'Low pH for PCFT'],
+        inhibitors: ['Low stomach acid', 'High glucose (B₁)']
+      }
+    },
+    {
+      id: 'fat-vitamins',
+      name: 'Fat-Soluble Pathway',
+      icon: '🌟',
+      description: 'Bile-dependent micelle formation for vitamins A,D,E,K via NPC1L1',
+      status: 'good',
+      efficiency: 81,
+      factors: {
+        enhancers: ['Healthy fats ✓', 'Bile salts active', 'Phospholipids'],
+        inhibitors: ['Limited micelle space', 'Poor bile flow']
+      }
+    },
+    {
+      id: 'amino-acids',
+      name: 'Amino Acid Transport',
+      icon: '🥩',
+      description: 'LAT1 large amino acids, CAT cationic, EAAT acidic transporters',
+      status: 'optimal',
+      efficiency: 88,
+      factors: {
+        enhancers: ['Complete proteins', 'Optimal pH'],
+        inhibitors: ['LAT1 competition', 'Energy depletion']
+      }
+    },
+    {
+      id: 'minerals',
+      name: 'Trace Minerals',
+      icon: '💎',
+      description: 'ZIP4 zinc transport, selenoprotein P, copper CTR1 systems',
+      status: 'good',
+      efficiency: 72,
+      factors: {
+        enhancers: ['Metallothionein ready', 'Vitamin E (Se)'],
+        inhibitors: ['Phytate binding', 'Iron competition']
+      }
     }
-  },
-  {
-    id: 'calcium',
-    name: 'Calcium Channels',
-    icon: '🦴',
-    description: 'TRPV6 channel-mediated calcium transport with vitamin D regulation',
-    status: 'good',
-    efficiency: 76,
-    factors: {
-      enhancers: ['Vitamin D active', 'Magnesium present'],
-      inhibitors: ['High fiber']
+  ],
+  hepatic: [
+    {
+      id: 'phase-1',
+      name: 'Phase I Metabolism',
+      icon: '🔥',
+      description: 'CYP450 enzymes (CYP1A2, CYP2E1, CYP3A4) for oxidation',
+      status: 'optimal',
+      efficiency: 91,
+      factors: {
+        enhancers: ['Iron adequate', 'NADPH available', 'Flavins present'],
+        inhibitors: ['Grapefruit (CYP3A4)', 'Alcohol load']
+      }
+    },
+    {
+      id: 'phase-2',
+      name: 'Phase II Conjugation',
+      icon: '🔗',
+      description: 'Sulfation, glucuronidation, glutathione conjugation pathways',
+      status: 'good',
+      efficiency: 83,
+      factors: {
+        enhancers: ['Sulfur amino acids', 'B-vitamins ✓', 'GSH synthesis'],
+        inhibitors: ['Acetaminophen load', 'Toxin overload']
+      }
+    },
+    {
+      id: 'vitamin-storage',
+      name: 'Vitamin Storage',
+      icon: '📦',
+      description: 'Stellate cells store vitamin A, 25-hydroxylation of vitamin D',
+      status: 'optimal',
+      efficiency: 94,
+      factors: {
+        enhancers: ['RBP synthesis ✓', 'α-TTP for vitamin E', 'VKORC1 active'],
+        inhibitors: ['Fatty liver', 'Storage capacity']
+      }
+    },
+    {
+      id: 'protein-synthesis',
+      name: 'Protein Synthesis',
+      icon: '🏗️',
+      description: 'Albumin, transferrin, coagulation factors production',
+      status: 'good',
+      efficiency: 79,
+      factors: {
+        enhancers: ['Complete amino acids', 'Vitamin K available'],
+        inhibitors: ['Inflammation', 'Nutrient deficiency']
+      }
+    },
+    {
+      id: 'lipid-metabolism',
+      name: 'Lipid Processing',
+      icon: '🧈',
+      description: 'VLDL synthesis, cholesterol regulation, bile acid production',
+      status: 'good',
+      efficiency: 85,
+      factors: {
+        enhancers: ['Choline adequate', 'B₃ for VLDL', 'Fiber intake'],
+        inhibitors: ['Saturated fat excess', 'Alcohol']
+      }
+    },
+    {
+      id: 'detox-pathways',
+      name: 'Detoxification',
+      icon: '🧹',
+      description: 'Ammonia to urea, bilirubin conjugation, xenobiotic processing',
+      status: 'optimal',
+      efficiency: 90,
+      factors: {
+        enhancers: ['Arginine cycle ✓', 'UDP-glucuronic acid', 'Molybdenum'],
+        inhibitors: ['High protein load', 'Drug burden']
+      }
     }
-  },
-  {
-    id: 'b-complex',
-    name: 'B-Complex Network',
-    icon: '🧠',
-    description: 'B12 intrinsic factor binding and folate transport systems',
-    status: 'attention',
-    efficiency: 58,
-    factors: {
-      enhancers: ['B12-IF complex'],
-      inhibitors: ['Low stomach acid', 'Alcohol interference']
+  ],
+  circulatory: [
+    {
+      id: 'iron-transport',
+      name: 'Iron Transport',
+      icon: '🚚',
+      description: 'Transferrin binding and TfR1 receptor-mediated uptake',
+      status: 'optimal',
+      efficiency: 93,
+      factors: {
+        enhancers: ['Transferrin saturation OK', 'Hepcidin balanced', 'Copper for ceruloplasmin'],
+        inhibitors: ['Inflammation (↑hepcidin)', 'Iron overload']
+      }
+    },
+    {
+      id: 'vitamin-carriers',
+      name: 'Vitamin Carriers',
+      icon: '📬',
+      description: 'RBP for vitamin A, DBP for vitamin D, lipoproteins for E',
+      status: 'good',
+      efficiency: 87,
+      factors: {
+        enhancers: ['Protein synthesis ✓', 'Zinc for RBP', 'HDL/LDL balance'],
+        inhibitors: ['Low protein status', 'Liver dysfunction']
+      }
+    },
+    {
+      id: 'vascular-function',
+      name: 'Vascular Health',
+      icon: '💗',
+      description: 'eNOS nitric oxide production, endothelial function',
+      status: 'good',
+      efficiency: 82,
+      factors: {
+        enhancers: ['L-arginine ✓', 'BH4 cofactor', 'Vitamin C recycling'],
+        inhibitors: ['Oxidative stress', 'High homocysteine']
+      }
+    },
+    {
+      id: 'lipid-transport',
+      name: 'Lipid Transport',
+      icon: '🧪',
+      description: 'Chylomicrons, VLDL, LDL, HDL lipoprotein particles',
+      status: 'good',
+      efficiency: 78,
+      factors: {
+        enhancers: ['ApoB synthesis', 'LPL activity', 'Omega-3 balance'],
+        inhibitors: ['High triglycerides', 'Poor HDL function']
+      }
+    },
+    {
+      id: 'antioxidant-network',
+      name: 'Antioxidant Defense',
+      icon: '🛡️',
+      description: 'Vitamin C/E recycling, selenium glutathione peroxidase',
+      status: 'optimal',
+      efficiency: 91,
+      factors: {
+        enhancers: ['Vitamin synergy ✓', 'GSH-Px active', 'Polyphenols'],
+        inhibitors: ['Smoking', 'High oxidative load']
+      }
+    },
+    {
+      id: 'mineral-transport',
+      name: 'Mineral Delivery',
+      icon: '⚡',
+      description: 'Ceruloplasmin copper, selenoprotein P, zinc-albumin binding',
+      status: 'good',
+      efficiency: 84,
+      factors: {
+        enhancers: ['Albumin levels OK', 'pH balance', 'Protein binding'],
+        inhibitors: ['Competition', 'Low albumin']
+      }
     }
-  },
-  {
-    id: 'fat-vitamins',
-    name: 'Fat-Soluble Vitamins',
-    icon: '🌟',
-    description: 'Bile-dependent absorption of vitamins A, D, E, K',
-    status: 'good',
-    efficiency: 81,
-    factors: {
-      enhancers: ['Healthy fats ✓', 'Bile flow good'],
-      inhibitors: ['Competition A,E']
+  ],
+  cellular: [
+    {
+      id: 'mitochondria',
+      name: 'Energy Production',
+      icon: '⚡',
+      description: 'Electron transport chain complexes I-IV, ATP synthase',
+      status: 'optimal',
+      efficiency: 89,
+      factors: {
+        enhancers: ['CoQ10 adequate', 'B-vitamins ✓', 'Magnesium for ATP'],
+        inhibitors: ['Oxidative damage', 'Nutrient deficiency']
+      }
+    },
+    {
+      id: 'protein-machinery',
+      name: 'Protein Synthesis',
+      icon: '🏭',
+      description: 'Ribosome function, mTOR signaling, amino acid sensing',
+      status: 'good',
+      efficiency: 81,
+      factors: {
+        enhancers: ['Leucine signaling', 'Zinc for RNA pol', 'B₆ metabolism'],
+        inhibitors: ['Energy deficit', 'Incomplete amino acids']
+      }
+    },
+    {
+      id: 'dna-repair',
+      name: 'DNA Maintenance',
+      icon: '🧬',
+      description: 'Base excision repair, nucleotide synthesis, methylation',
+      status: 'good',
+      efficiency: 86,
+      factors: {
+        enhancers: ['Folate/B₁₂ ✓', 'Zinc fingers', 'NAD+ for PARP'],
+        inhibitors: ['Oxidative stress', 'Methyl donor deficit']
+      }
+    },
+    {
+      id: 'antioxidant-systems',
+      name: 'Cellular Defense',
+      icon: '🛡️',
+      description: 'SOD, catalase, glutathione peroxidase, Nrf2 pathway',
+      status: 'optimal',
+      efficiency: 92,
+      factors: {
+        enhancers: ['Mn/Cu/Zn-SOD', 'Selenium GPx', 'Sulforaphane Nrf2'],
+        inhibitors: ['ROS overload', 'Heavy metals']
+      }
+    },
+    {
+      id: 'calcium-signaling',
+      name: 'Calcium Signaling',
+      icon: '📡',
+      description: 'ER calcium stores, calmodulin activation, muscle contraction',
+      status: 'good',
+      efficiency: 83,
+      factors: {
+        enhancers: ['Vitamin D status', 'Magnesium balance', 'IP3 signaling'],
+        inhibitors: ['ER stress', 'Calcium overload']
+      }
+    },
+    {
+      id: 'membrane-function',
+      name: 'Membrane Health',
+      icon: '🧱',
+      description: 'Phospholipid synthesis, omega-3 incorporation, fluidity',
+      status: 'good',
+      efficiency: 87,
+      factors: {
+        enhancers: ['DHA/EPA ratio', 'Choline for PC', 'Vitamin E protection'],
+        inhibitors: ['Trans fats', 'Lipid peroxidation']
+      }
     }
-  },
-  {
-    id: 'antioxidants',
-    name: 'Antioxidant Systems',
-    icon: '🛡️',
-    description: 'Coordinated vitamin C, E, selenium, and glutathione pathways',
-    status: 'optimal',
-    efficiency: 94,
-    factors: {
-      enhancers: ['Synergy active ✓', 'Recycling optimal', 'Selenium adequate'],
-      inhibitors: []
-    }
-  },
-  {
-    id: 'minerals',
-    name: 'Trace Minerals',
-    icon: '💎',
-    description: 'Zinc, copper, manganese transport and metallothionein binding',
-    status: 'good',
-    efficiency: 72,
-    factors: {
-      enhancers: ['Balanced ratios'],
-      inhibitors: ['Phytate binding', 'Iron competition']
-    }
-  }
-];
+  ]
+};
 
 const detailedData = {
+  // Intestinal System Receptors
   iron: {
-    title: "Iron Absorption System",
-    subtitle: "DMT1 Transporter Complex",
-    mechanism: "Iron enters through the DMT1 (Divalent Metal Transporter 1) when in ferrous (Fe²⁺) form. Duodenal cytochrome B reductase converts dietary ferric iron to the absorbable form.",
+    title: "Iron Absorption Complex",
+    subtitle: "DMT1 Transporter with Dcytb Reduction",
+    mechanism: "Iron enters through DMT1 (Divalent Metal Transporter 1) when in ferrous (Fe²⁺) form. Dcytb (Duodenal cytochrome B) reduces dietary Fe³⁺ to absorbable Fe²⁺. Hephaestin oxidizes iron for ferroportin export.",
     enhancers: [
-      { name: "Vitamin C", description: "Maintains iron in Fe²⁺ state, increases absorption 3-5x" },
-      { name: "Heme Iron", description: "Direct uptake via heme transporter, bypasses competition" },
-      { name: "Empty Stomach", description: "Acidic environment favors Fe³⁺ → Fe²⁺ conversion" }
+      { name: "Vitamin C", description: "Maintains Fe²⁺ state, enhances Dcytb activity (3-5x increase)" },
+      { name: "Citric Acid", description: "Chelation and pH optimization for absorption" },
+      { name: "Heme Iron", description: "Direct uptake via HCP1 transporter, bypasses competition" }
     ],
     inhibitors: [
       { name: "Calcium", description: "Competes for DMT1 binding site" },
-      { name: "Polyphenols", description: "Form insoluble complexes with iron" },
-      { name: "Zinc", description: "Shared transporter pathway competition" }
+      { name: "Zinc/Copper", description: "Shared DMT1 transporter competition" },
+      { name: "Phytates/Tannins", description: "Form insoluble complexes with iron" }
     ],
-    strategy: "Take iron supplements 1 hour before meals or 2 hours after. Separate from calcium by 2+ hours. Combine with vitamin C-rich foods for maximum absorption.",
-    status: "Optimal (92% efficiency) - Your morning vitamin C intake has created excellent conditions for iron absorption. Recent meal timing shows good separation from calcium sources."
+    strategy: "Take iron on empty stomach or 2 hours after meals. Separate from calcium/zinc by 2+ hours. Combine with vitamin C source.",
+    status: "Your vitamin C intake has optimized iron absorption. Maintain current supplement timing."
+  },
+  calcium: {
+    title: "Calcium Channel Complex",
+    subtitle: "TRPV6 with Vitamin D Regulation",
+    mechanism: "TRPV6 channels mediate calcium entry, regulated by calcitriol (active vitamin D). Calbindin-D9k shuttles calcium intracellularly to PMCA1b for export.",
+    enhancers: [
+      { name: "Vitamin D₃", description: "Upregulates TRPV6 expression and calbindin synthesis" },
+      { name: "Vitamin K₂", description: "Directs calcium to bones, prevents vascular deposits" },
+      { name: "Magnesium", description: "Required cofactor for vitamin D activation" }
+    ],
+    inhibitors: [
+      { name: "Phytates", description: "Bind calcium, form insoluble complexes" },
+      { name: "High Fiber", description: "Physical binding reduces bioavailability" },
+      { name: "Magnesium Excess", description: "Competes for TRPV6 channel" }
+    ],
+    strategy: "Take calcium in divided doses (500mg or less) with meals. Ensure adequate vitamin D and K₂.",
+    status: "TRPV6 channels functioning well. Vitamin D status supporting optimal absorption."
+  },
+  // Hepatic System Receptors
+  'phase-1': {
+    title: "Phase I Metabolism",
+    subtitle: "Cytochrome P450 Enzyme System",
+    mechanism: "CYP450 enzymes oxidize compounds for phase II processing. CYP3A4 metabolizes ~50% of drugs, CYP2E1 processes alcohol, CYP1A2 handles caffeine.",
+    enhancers: [
+      { name: "Iron", description: "Essential for cytochrome P450 heme structure" },
+      { name: "B-Vitamins", description: "NADPH generation for electron transfer" },
+      { name: "Protein", description: "Provides amino acids for enzyme synthesis" }
+    ],
+    inhibitors: [
+      { name: "Grapefruit", description: "Furanocoumarin inhibits CYP3A4" },
+      { name: "Alcohol", description: "Induces CYP2E1, depletes glutathione" },
+      { name: "Heavy Metals", description: "Disrupt enzyme structure and function" }
+    ],
+    strategy: "Support with adequate protein and B-vitamins. Avoid grapefruit with medications.",
+    status: "CYP450 system functioning optimally with good nutrient support."
+  },
+  // Circulatory System Receptors
+  'iron-transport': {
+    title: "Iron Transport Network",
+    subtitle: "Transferrin-Mediated Delivery",
+    mechanism: "Transferrin binds 2 Fe³⁺ ions for transport. TfR1 receptors mediate cellular uptake via endocytosis. Hepcidin regulates system-wide iron homeostasis.",
+    enhancers: [
+      { name: "Copper", description: "Required for ceruloplasmin ferroxidase activity" },
+      { name: "Vitamin A", description: "Mobilizes iron from storage" },
+      { name: "Balanced pH", description: "Optimal transferrin binding" }
+    ],
+    inhibitors: [
+      { name: "Inflammation", description: "Increases hepcidin, blocks iron release" },
+      { name: "Iron Overload", description: "Saturates transferrin capacity" },
+      { name: "Copper Deficiency", description: "Impairs iron oxidation" }
+    ],
+    strategy: "Maintain anti-inflammatory diet. Ensure adequate copper intake.",
+    status: "Transferrin saturation optimal. Hepcidin levels balanced."
+  },
+  // Cellular System Receptors
+  mitochondria: {
+    title: "Mitochondrial Energy Production",
+    subtitle: "Electron Transport Chain",
+    mechanism: "Complexes I-IV transfer electrons to generate ATP. Complex I uses FMN/Fe-S, Complex III uses cytochrome b/c1, Complex IV uses copper/heme centers.",
+    enhancers: [
+      { name: "CoQ10", description: "Electron shuttle between complexes I/II and III" },
+      { name: "B-Complex", description: "B₁ for PDH, B₂ for FAD, B₃ for NAD⁺" },
+      { name: "Magnesium", description: "Required for ATP synthase function" }
+    ],
+    inhibitors: [
+      { name: "Oxidative Stress", description: "Damages complex proteins and membranes" },
+      { name: "Nutrient Deficiency", description: "Limits cofactor availability" },
+      { name: "Heavy Metals", description: "Disrupt electron transport" }
+    ],
+    strategy: "Support with CoQ10, B-complex, and antioxidants. Consider timing with exercise.",
+    status: "Energy production efficient. Cofactor levels supporting ATP synthesis."
   }
 };
 
@@ -648,8 +945,8 @@ export default function BodySystemsNutrition() {
                 }}
               >
                 {key === 'intestinal' && '🔬'} 
-                {key === 'liver' && '🏭'} 
-                {key === 'blood' && '🚛'} 
+                {key === 'hepatic' && '🏭'} 
+                {key === 'circulatory' && '🚛'} 
                 {key === 'cellular' && '⚡'} 
                 {data.title.split(' ')[0]}
               </button>
@@ -679,7 +976,7 @@ export default function BodySystemsNutrition() {
             
             {/* Receptor Grid */}
             <div style={styles.receptorGrid}>
-              {clusterData.map(cluster => (
+              {(systemClusterData[activeSystem] || []).map(cluster => (
                 <Card
                   key={cluster.id}
                   hoverable
@@ -751,40 +1048,92 @@ export default function BodySystemsNutrition() {
               </div>
               
               <div style={styles.panelContent}>
-                <div style={{marginBottom: '1.5rem'}}>
-                  <h3 style={styles.sectionTitle}>🔬 How It Works</h3>
-                  <p style={{fontSize: '0.8125rem', lineHeight: 1.5, color: '#1e293b', margin: 0}}>
-                    {selectedCluster.description}
-                  </p>
-                </div>
-                
-                <div style={{marginBottom: '1.5rem'}}>
-                  <h3 style={styles.sectionTitle}>✅ Enhancement Factors</h3>
-                  <ul style={{listStyle: 'none', padding: 0, margin: 0}}>
-                    {selectedCluster.factors.enhancers.map((enhancer, idx) => (
-                      <li key={idx} style={{padding: '0.5rem 0', borderBottom: '1px solid #f8fafc', fontSize: '0.8125rem', color: '#1e293b'}}>{enhancer}</li>
-                    ))}
-                  </ul>
-                  
-                  {selectedCluster.factors.inhibitors.length > 0 && (
-                    <>
-                      <h3 style={{...styles.sectionTitle, marginTop: '1.5rem'}}>❌ Inhibiting Factors</h3>
+                {detailedData[selectedCluster.id] ? (
+                  <>
+                    <div style={{marginBottom: '1.5rem'}}>
+                      <h3 style={styles.sectionTitle}>🔬 Molecular Mechanism</h3>
+                      <p style={{fontSize: '0.8125rem', lineHeight: 1.5, color: '#1e293b', margin: 0}}>
+                        {detailedData[selectedCluster.id].mechanism}
+                      </p>
+                    </div>
+                    
+                    <div style={{marginBottom: '1.5rem'}}>
+                      <h3 style={styles.sectionTitle}>✅ Enhancement Factors</h3>
                       <ul style={{listStyle: 'none', padding: 0, margin: 0}}>
-                        {selectedCluster.factors.inhibitors.map((inhibitor, idx) => (
-                          <li key={idx} style={{padding: '0.5rem 0', borderBottom: '1px solid #f8fafc', fontSize: '0.8125rem', color: '#1e293b'}}>{inhibitor}</li>
+                        {detailedData[selectedCluster.id].enhancers.map((enhancer, idx) => (
+                          <li key={idx} style={{padding: '0.5rem 0', borderBottom: '1px solid #f8fafc'}}>
+                            <strong style={{fontSize: '0.8125rem', color: '#1e293b'}}>{enhancer.name}</strong>
+                            <p style={{fontSize: '0.75rem', color: '#64748b', margin: '0.25rem 0 0 0'}}>{enhancer.description}</p>
+                          </li>
                         ))}
                       </ul>
-                    </>
-                  )}
-                </div>
-                
-                <div>
-                  <h3 style={styles.sectionTitle}>📊 Current Status</h3>
-                  <p style={{fontSize: '0.8125rem', lineHeight: 1.5, color: '#1e293b', margin: 0}}>
-                    <strong>{selectedCluster.status.charAt(0).toUpperCase() + selectedCluster.status.slice(1)} ({selectedCluster.efficiency}% efficiency)</strong><br/>
-                    System is performing well with good nutrient utilization patterns.
-                  </p>
-                </div>
+                    </div>
+                    
+                    <div style={{marginBottom: '1.5rem'}}>
+                      <h3 style={styles.sectionTitle}>❌ Inhibiting Factors</h3>
+                      <ul style={{listStyle: 'none', padding: 0, margin: 0}}>
+                        {detailedData[selectedCluster.id].inhibitors.map((inhibitor, idx) => (
+                          <li key={idx} style={{padding: '0.5rem 0', borderBottom: '1px solid #f8fafc'}}>
+                            <strong style={{fontSize: '0.8125rem', color: '#1e293b'}}>{inhibitor.name}</strong>
+                            <p style={{fontSize: '0.75rem', color: '#64748b', margin: '0.25rem 0 0 0'}}>{inhibitor.description}</p>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    
+                    <div style={{marginBottom: '1.5rem'}}>
+                      <h3 style={styles.sectionTitle}>💡 Optimization Strategy</h3>
+                      <p style={{fontSize: '0.8125rem', lineHeight: 1.5, color: '#1e293b', margin: 0}}>
+                        {detailedData[selectedCluster.id].strategy}
+                      </p>
+                    </div>
+                    
+                    <div>
+                      <h3 style={styles.sectionTitle}>📊 Current Status</h3>
+                      <p style={{fontSize: '0.8125rem', lineHeight: 1.5, color: '#1e293b', margin: 0}}>
+                        <strong>{selectedCluster.status.charAt(0).toUpperCase() + selectedCluster.status.slice(1)} ({selectedCluster.efficiency}% efficiency)</strong><br/>
+                        {detailedData[selectedCluster.id].status}
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div style={{marginBottom: '1.5rem'}}>
+                      <h3 style={styles.sectionTitle}>🔬 How It Works</h3>
+                      <p style={{fontSize: '0.8125rem', lineHeight: 1.5, color: '#1e293b', margin: 0}}>
+                        {selectedCluster.description}
+                      </p>
+                    </div>
+                    
+                    <div style={{marginBottom: '1.5rem'}}>
+                      <h3 style={styles.sectionTitle}>✅ Enhancement Factors</h3>
+                      <ul style={{listStyle: 'none', padding: 0, margin: 0}}>
+                        {selectedCluster.factors.enhancers.map((enhancer, idx) => (
+                          <li key={idx} style={{padding: '0.5rem 0', borderBottom: '1px solid #f8fafc', fontSize: '0.8125rem', color: '#1e293b'}}>{enhancer}</li>
+                        ))}
+                      </ul>
+                      
+                      {selectedCluster.factors.inhibitors.length > 0 && (
+                        <>
+                          <h3 style={{...styles.sectionTitle, marginTop: '1.5rem'}}>❌ Inhibiting Factors</h3>
+                          <ul style={{listStyle: 'none', padding: 0, margin: 0}}>
+                            {selectedCluster.factors.inhibitors.map((inhibitor, idx) => (
+                              <li key={idx} style={{padding: '0.5rem 0', borderBottom: '1px solid #f8fafc', fontSize: '0.8125rem', color: '#1e293b'}}>{inhibitor}</li>
+                            ))}
+                          </ul>
+                        </>
+                      )}
+                    </div>
+                    
+                    <div>
+                      <h3 style={styles.sectionTitle}>📊 Current Status</h3>
+                      <p style={{fontSize: '0.8125rem', lineHeight: 1.5, color: '#1e293b', margin: 0}}>
+                        <strong>{selectedCluster.status.charAt(0).toUpperCase() + selectedCluster.status.slice(1)} ({selectedCluster.efficiency}% efficiency)</strong><br/>
+                        System is performing well with good nutrient utilization patterns.
+                      </p>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>

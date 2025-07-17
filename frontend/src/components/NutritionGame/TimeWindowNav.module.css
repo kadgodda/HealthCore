@@ -1,0 +1,137 @@
+/* Time Window Navigation */
+.timeWindowNav {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  background: var(--theme-bg-secondary, #151a35);
+  padding: 0.5rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--theme-border, #2d3561);
+}
+
+.windowButton {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 250ms ease;
+  position: relative;
+  color: var(--theme-text-secondary, #94a3b8);
+}
+
+.windowButton:hover {
+  background: var(--theme-bg-elevated, #1e2442);
+  border-color: var(--theme-border-hover, #4a5578);
+}
+
+.windowButton.current {
+  background: var(--theme-bg-elevated, #1e2442);
+  border-color: var(--brand-primary, #4f46e5);
+  color: var(--theme-text-primary, #e2e8f0);
+}
+
+.windowButton.active {
+  border-color: var(--theme-success, #10b981);
+}
+
+.windowIcon {
+  font-size: 1.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--theme-bg-primary, #0a0e27);
+  border-radius: 0.5rem;
+}
+
+.windowInfo {
+  flex: 1;
+  text-align: left;
+}
+
+.windowLabel {
+  font-weight: 600;
+  font-size: 0.875rem;
+  margin-bottom: 0.25rem;
+}
+
+.windowTime {
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+
+.progressBar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--theme-bg-primary, #0a0e27);
+  border-radius: 0 0 0.5rem 0.5rem;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--brand-primary, #4f46e5), var(--brand-secondary, #8b5cf6));
+  transition: width 500ms ease;
+}
+
+.activeDot {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 0.5rem;
+  height: 0.5rem;
+  background: var(--theme-success, #10b981);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.2);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .timeWindowNav {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .windowButton {
+    flex: 1 1 calc(50% - 0.25rem);
+    padding: 0.75rem;
+  }
+  
+  .windowIcon {
+    font-size: 1.25rem;
+    width: 2rem;
+    height: 2rem;
+  }
+  
+  .windowLabel {
+    font-size: 0.8125rem;
+  }
+  
+  .windowTime {
+    font-size: 0.6875rem;
+  }
+}

@@ -1,0 +1,179 @@
+/* App Container */
+.app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--theme-bg-primary, #0a0e27);
+}
+
+/* Header */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--theme-bg-elevated, #1e2442);
+  border-bottom: 1px solid var(--theme-border, #2d3561);
+  padding: 1rem;
+  backdrop-filter: blur(10px);
+  background: rgba(30, 36, 66, 0.95);
+}
+
+.headerContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.appTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+  background: linear-gradient(45deg, var(--brand-primary, #4f46e5), var(--brand-secondary, #8b5cf6));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Navigation */
+.nav {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.navButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 0.5rem;
+  color: var(--theme-text-secondary, #94a3b8);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.navButton:hover {
+  background: var(--theme-bg-secondary, #151a35);
+  color: var(--theme-text-primary, #e2e8f0);
+  border-color: var(--theme-border, #2d3561);
+}
+
+.navButton.active {
+  background: var(--brand-primary, #4f46e5);
+  color: white;
+  border-color: var(--brand-primary, #4f46e5);
+}
+
+.navIcon {
+  font-size: 1.25rem;
+}
+
+.navTitle {
+  display: none;
+}
+
+/* Main Content */
+.main {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  touch-action: pan-y;
+  cursor: grab;
+}
+
+.main:active {
+  cursor: grabbing;
+}
+
+.pageContainer {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  will-change: transform;
+}
+
+.page {
+  flex-shrink: 0;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Page Indicators */
+.indicators {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: var(--theme-bg-elevated, #1e2442);
+  border-top: 1px solid var(--theme-border, #2d3561);
+}
+
+.indicator {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--theme-border, #2d3561);
+  border: none;
+  cursor: pointer;
+  transition: all 200ms ease;
+  padding: 0;
+}
+
+.indicator:hover {
+  background: var(--theme-text-secondary, #94a3b8);
+  transform: scale(1.2);
+}
+
+.indicator.active {
+  background: var(--brand-primary, #4f46e5);
+  width: 1.5rem;
+  border-radius: 0.25rem;
+}
+
+/* Responsive Design */
+@media (min-width: 768px) {
+  .navTitle {
+    display: inline;
+  }
+  
+  .navButton {
+    padding: 0.75rem 1.5rem;
+  }
+  
+  .header {
+    padding: 1.5rem;
+  }
+  
+  .appTitle {
+    font-size: 2rem;
+  }
+}
+
+/* Disable text selection during swipe */
+.main {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Smooth scrolling for pages */
+.page {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Page transitions */
+@media (prefers-reduced-motion: reduce) {
+  .pageContainer {
+    transition: none !important;
+  }
+}
