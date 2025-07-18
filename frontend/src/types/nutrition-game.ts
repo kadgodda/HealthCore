@@ -128,6 +128,16 @@ export interface CannabisEffect {
   source: ConsumptionMethod;
 }
 
+// Nutrient tracking types
+export interface NutrientInput {
+  name: string;
+  amount: number;
+  unit: string;
+  timing: 'with_food' | 'empty_stomach' | 'before_meal' | 'after_meal';
+  source: 'food' | 'supplement' | 'activity';
+  timestamp?: Date;
+}
+
 // AI Suggestions
 export interface Suggestion {
   id: string;

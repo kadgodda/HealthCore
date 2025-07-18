@@ -162,6 +162,50 @@ class ReceptorService:
         if system in self.receptor_data:
             return self.receptor_data[system].get('receptors', {})
         return {}
+    
+    def generate_expert_commentary(
+        self, 
+        system_key: str, 
+        efficiency: float,
+        nutrients: List[NutrientInput]
+    ) -> str:
+        """Generate expert commentary based on system efficiency and nutrients."""
+        recent_nutrients = [n.name for n in nutrients[-5:]] if nutrients else []
+        nutrient_list = ', '.join(recent_nutrients) if recent_nutrients else 'no tracked nutrients'
+        
+        if system_key == 'intestinal':
+            if efficiency >= 90:
+                return f"Your absorption patterns show excellent utilization of {nutrient_list}. The intestinal receptors are optimally primed for nutrient uptake."
+            elif efficiency >= 70:
+                return f"Good intestinal absorption detected. Recent intake of {nutrient_list} is being processed efficiently with minor optimization opportunities."
+            else:
+                return f"Absorption efficiency could be improved. Consider timing and combinations when taking {nutrient_list} for better uptake."
+                
+        elif system_key == 'hepatic':
+            if efficiency >= 90:
+                return f"Liver enzyme activity is well-supported. Your recent nutrients ({nutrient_list}) are being metabolized optimally."
+            elif efficiency >= 70:
+                return f"Hepatic processing is functioning well. The nutrients you've taken are supporting detoxification pathways adequately."
+            else:
+                return f"Liver support could be enhanced. Consider spacing your nutrient intake and supporting Phase II detoxification."
+                
+        elif system_key == 'circulatory':
+            if efficiency >= 90:
+                return f"Nutrient delivery systems are performing excellently. Your {nutrient_list} are being transported efficiently throughout your body."
+            elif efficiency >= 70:
+                return f"Good circulatory transport detected. Nutrients are reaching their targets with reasonable efficiency."
+            else:
+                return f"Transport efficiency could be improved. Consider cardiovascular support nutrients alongside {nutrient_list}."
+                
+        elif system_key == 'cellular':
+            if efficiency >= 90:
+                return f"Cellular utilization is optimal. Mitochondrial function is well-supported by your current nutrient profile including {nutrient_list}."
+            elif efficiency >= 70:
+                return f"Cells are utilizing nutrients adequately. Energy production pathways are functioning with good efficiency."
+            else:
+                return f"Cellular efficiency needs support. Consider cofactors for energy production alongside your current nutrients."
+                
+        return f"System analysis shows {efficiency:.0f}% efficiency with recent nutrients: {nutrient_list}."
 
 
 # Singleton instance

@@ -19,7 +19,14 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    
+    /* Path mappings */
+    "baseUrl": ".",
+    "paths": {
+      "@anteacore/shared": ["../../AnteaCore/anteacore-shared/typescript/src/index.ts"],
+      "@anteacore/shared/*": ["../../AnteaCore/anteacore-shared/typescript/src/*"]
+    }
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]

@@ -1,0 +1,35 @@
+/* ProgressBar.module.css */
+.progressBar {
+  width: 100%;
+  background-color: #e5e7eb;
+  border-radius: 9999px;
+  height: 0.5rem;
+  overflow: hidden;
+}
+
+.progressBarFill {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 300ms ease;
+}
+
+/* Variant styles */
+.primary {
+  background-color: #3b82f6;
+}
+
+.secondary {
+  background-color: #6b7280;
+}
+
+.success {
+  background-color: #10b981;
+}
+
+.warning {
+  background-color: #f59e0b;
+}
+
+.error {
+  background-color: #ef4444;
+}

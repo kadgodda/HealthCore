@@ -1,6 +1,5 @@
 import React from 'react';
 import { MissionCardProps, MISSION_CATEGORIES } from '../../types/nutrition-game';
-import { Card, Badge, ProgressBar, Tooltip } from '../../lib/anteacore-bridge';
 import styles from './MissionCard.module.css';
 
 const MissionCard: React.FC<MissionCardProps> = ({
@@ -25,70 +24,66 @@ const MissionCard: React.FC<MissionCardProps> = ({
     
     const isBoost = cannabisEffect.type === 'boost';
     return (
-      <Tooltip content={cannabisEffect.description}>
-        <Badge 
-          className={`${styles.cannabisIndicator} ${isBoost ? styles.boost : styles.penalty}`}
-        >
-          {isBoost ? '🚀' : '⚠️'} {Math.abs(cannabisEffect.percentage)}%
-        </Badge>
-      </Tooltip>
+      <div 
+        className={`${styles.cannabisIndicator} ${isBoost ? styles.boost : styles.penalty}`}
+        title={cannabisEffect.description}
+      >
+        {isBoost ? '🚀' : '⚠️'} {Math.abs(cannabisEffect.percentage)}%
+      </div>
     );
   };
 
   return (
-    <Card
+    <button
       className={`${styles.missionCard} ${isCompleted ? styles.completed : ''} ${disabled ? styles.disabled : ''}`}
-      onClick={disabled ? undefined : onClick}
-      hoverable={!disabled}
+      onClick={onClick}
+      disabled={disabled}
       style={{ '--category-color': category.color } as React.CSSProperties}
     >
       {getEffectIndicator()}
       
-      <Card.Header className={styles.missionHeader}>
+      <div className={styles.missionHeader}>
         <div className={styles.missionIcon} style={{ background: category.color }}>
           {category.icon}
         </div>
         <div className={styles.missionInfo}>
-          <Card.Title as="h4" className={styles.missionTitle}>
-            {mission.title}
-          </Card.Title>
-          <Card.Subtitle className={styles.missionDescription}>
-            {mission.description}
-          </Card.Subtitle>
+          <h4 className={styles.missionTitle}>{mission.title}</h4>
+          <p className={styles.missionDescription}>{mission.description}</p>
         </div>
-      </Card.Header>
+      </div>
       
-      <Card.Body className={styles.missionStats}>
-        <Badge className={styles.pointsBadge} variant="primary">
+      <div className={styles.missionStats}>
+        <div className={styles.pointsBadge}>
           {mission.basePoints} pts
-        </Badge>
+        </div>
         <div className={styles.targetReceptors}>
           {mission.targetReceptors.slice(0, 2).map((receptor, idx) => (
-            <Badge key={idx} variant="secondary" className={styles.receptorTag}>
+            <span key={idx} className={styles.receptorTag}>
               {receptor}
-            </Badge>
+            </span>
           ))}
           {mission.targetReceptors.length > 2 && (
-            <Badge variant="secondary" className={styles.receptorTag}>
-              +{mission.targetReceptors.length - 2}
-            </Badge>
+            <span className={styles.receptorTag}>+{mission.targetReceptors.length - 2}</span>
           )}
         </div>
-      </Card.Body>
+      </div>
       
-      <Card.Footer className={styles.progressContainer}>
-        <ProgressBar 
-          value={progressPercentage} 
-          max={100}
-          className={styles.progressBar}
-          variant={isCompleted ? 'success' : 'primary'}
-        />
+      <div className={styles.progressContainer}>
+        <div className={styles.progressBar}>
+          <div 
+            className={styles.progressFill}
+            style={{ 
+              width: `${progressPercentage}%`,
+              background: getStatusColor()
+            }}
+          />
+        </div>
         {isCompleted && (
           <div className={styles.completedIcon} style={{ color: getStatusColor() }}>
             ✓
           </div>
         )}
-      </Card.Footer>
+      </div>
       
       {disabled && (
         <div className={styles.lockedOverlay}>
@@ -96,7 +91,7 @@ const MissionCard: React.FC<MissionCardProps> = ({
           <span className={styles.lockText}>Complete previous level</span>
         </div>
       )}
-    </Card>
+    </button>
   );
 };
 

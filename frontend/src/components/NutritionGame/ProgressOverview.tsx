@@ -1,5 +1,6 @@
 import React from 'react';
 import { ProgressOverviewProps, LEVEL_NAMES } from '../../types/nutrition-game';
+import { Card, Button, Badge, ProgressBar } from '../../lib/anteacore-bridge';
 import styles from './ProgressOverview.module.css';
 
 const ProgressOverview: React.FC<ProgressOverviewProps> = ({
@@ -30,62 +31,80 @@ const ProgressOverview: React.FC<ProgressOverviewProps> = ({
     }
   };
 
+  const getLevelVariant = () => {
+    switch (level) {
+      case 1: return 'success';
+      case 2: return 'warning';
+      case 3: return 'error'; // Using error for pink/accent color
+      default: return 'primary';
+    }
+  };
+
   return (
-    <div className={styles.progressOverview}>
-      <div className={styles.levelHeader}>
+    <Card className={styles.progressOverview}>
+      <Card.Header className={styles.levelHeader}>
         <div className={styles.levelInfo}>
-          <div className={styles.levelIcon} style={{ background: getLevelColor() }}>
-            {getLevelIcon()}
-          </div>
+          <Badge 
+            size="lg" 
+            variant={getLevelVariant() as any}
+            className={styles.levelIcon}
+            icon={getLevelIcon()}
+          />
           <div>
-            <h3 className={styles.levelTitle}>
+            <Card.Title as="h3" className={styles.levelTitle}>
               Level {level}: {levelName}
-            </h3>
-            <p className={styles.levelSubtitle}>
+            </Card.Title>
+            <Card.Subtitle className={styles.levelSubtitle}>
               {progress.completed}/{progress.total} missions completed
-            </p>
+            </Card.Subtitle>
           </div>
         </div>
         
         {progress.canLevelUp && (
           progress.leveledUpAt ? (
-            <div className={styles.completedBadge} style={{ borderColor: getLevelColor() }}>
-              <span>✓</span> Completed
-            </div>
+            <Badge 
+              variant="success" 
+              size="lg"
+              className={styles.completedBadge}
+              icon="✓"
+            >
+              Completed
+            </Badge>
           ) : (
-            <button 
+            <Button 
               className={styles.levelUpButton}
               onClick={onLevelUp}
+              variant="primary"
               style={{ 
                 background: getLevelColor(),
                 animation: 'pulse 2s infinite'
               }}
             >
               Level Up! 🎉
-            </button>
+            </Button>
           )
         )}
-      </div>
+      </Card.Header>
       
-      <div className={styles.progressBarContainer}>
-        <div className={styles.progressBar}>
-          <div 
-            className={styles.progressFill}
-            style={{ 
-              width: `${progressPercentage}%`,
-              background: getLevelColor()
-            }}
-          />
-        </div>
-        <span className={styles.progressText}>{Math.round(progressPercentage)}%</span>
-      </div>
+      <Card.Body className={styles.progressBarContainer}>
+        <ProgressBar 
+          value={progressPercentage}
+          max={100}
+          variant={getLevelVariant() as any}
+          showPercentage={true}
+          className={styles.progressBar}
+          animated={!isComplete}
+        />
+      </Card.Body>
       
       {isComplete && !progress.leveledUpAt && (
-        <p className={styles.readyMessage}>
-          🎯 All missions complete! Ready to level up when you are.
-        </p>
+        <Card.Footer>
+          <p className={styles.readyMessage}>
+            🎯 All missions complete! Ready to level up when you are.
+          </p>
+        </Card.Footer>
       )}
-    </div>
+    </Card>
   );
 };
 

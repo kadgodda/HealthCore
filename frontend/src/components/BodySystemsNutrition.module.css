@@ -1,0 +1,378 @@
+/* BodySystemsNutrition.module.css */
+
+.container {
+  font-family: -webkit-system-font, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  padding: 1.5rem;
+  color: #1e293b;
+}
+
+/* Header Section */
+.headerSection {
+  margin-bottom: 2rem;
+}
+
+.mainHeader {
+  text-align: center;
+  color: white;
+  margin-bottom: 1.5rem;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 300;
+  margin: 0 0 0.5rem 0;
+}
+
+.subtitle {
+  font-size: 1rem;
+  opacity: 0.9;
+  margin: 0;
+}
+
+/* Daily Score Card */
+.scoreCard {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 0.5rem;
+  color: white;
+  max-width: 1200px;
+  margin: 0 auto 1.5rem auto;
+}
+
+.scoreContent {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.scoreCircle {
+  width: 6rem;
+  height: 6rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
+}
+
+.scoreNumber {
+  font-size: 1.75rem;
+  font-weight: 300;
+  margin-bottom: 0.125rem;
+}
+
+.scoreLabel {
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.scoreInsights {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  flex: 1;
+}
+
+.insightItem {
+  text-align: center;
+}
+
+.insightNumber {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.insightLabel {
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+/* System Tabs */
+.systemTabs {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.systemTab {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.tabIcon {
+  font-size: 1.125rem;
+}
+
+/* Main Content */
+.mainContent {
+  max-width: 1200px;
+  margin: 0 auto 2rem auto;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.systemSubtitle {
+  text-align: center;
+  color: #64748b;
+  margin: 0.5rem 0 0 0;
+  font-size: 0.875rem;
+}
+
+/* Expert Card */
+.expertCard {
+  margin-bottom: 2rem;
+  background: #f8fafc;
+}
+
+.expertHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.expertAvatar {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff6b9d, #c44569);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+}
+
+.expertInfo {
+  flex: 1;
+}
+
+.expertName {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.expertTitle {
+  margin: 0.125rem 0 0 0;
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.expertCommentary {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #1e293b;
+  margin: 0;
+}
+
+/* Receptor Grid */
+.receptorGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.receptorCluster {
+  background: #f8fafc;
+  transition: all 0.15s ease;
+}
+
+.receptorCluster:hover {
+  transform: translateY(-2px);
+}
+
+.clusterHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.clusterIcon {
+  font-size: 1.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  background: white;
+}
+
+.clusterTitle {
+  font-size: 1rem;
+  margin: 0;
+}
+
+.clusterDescription {
+  color: #64748b;
+  font-size: 0.8125rem;
+  margin: 0 0 1rem 0;
+  line-height: 1.4;
+}
+
+/* Efficiency Section */
+.efficiencySection {
+  margin-bottom: 0.75rem;
+}
+
+.efficiencyLabel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+/* Nutrient Tags */
+.nutrientTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+/* Modal Styles */
+.modalContent {
+  padding: 0;
+}
+
+.modalSection {
+  margin-bottom: 1.5rem;
+}
+
+.modalSection:last-child {
+  margin-bottom: 0;
+}
+
+.sectionTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 0.75rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sectionContent {
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: #1e293b;
+  margin: 0;
+}
+
+.receptorList {
+  margin-top: 0.75rem;
+}
+
+.receptorList h4 {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  color: #1e293b;
+}
+
+.receptorList ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.receptorList li {
+  padding: 0.375rem 0;
+  font-size: 0.75rem;
+  color: #64748b;
+  border-bottom: 1px solid #f8fafc;
+}
+
+.statusDetails {
+  margin-bottom: 1rem;
+}
+
+.nutrientList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.recommendationList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.recommendationList li {
+  padding: 0.5rem 0;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: #1e293b;
+  border-bottom: 1px solid #f8fafc;
+}
+
+/* Loading State */
+.loadingCard {
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(15px);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Refresh Button */
+.refreshButton {
+  position: fixed;
+  bottom: 1.25rem;
+  right: 1.25rem;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .title {
+    font-size: 1.5rem;
+  }
+  
+  .scoreContent {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .scoreInsights {
+    grid-template-columns: repeat(2, 1fr);
+    width: 100%;
+  }
+  
+  .systemTabs {
+    justify-content: flex-start;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 0.5rem;
+  }
+  
+  .receptorGrid {
+    grid-template-columns: 1fr;
+  }
+}
