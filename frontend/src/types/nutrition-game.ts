@@ -33,7 +33,9 @@ export interface MissionProgress {
   missionId: string;
   completed: boolean;
   progress: number; // 0-100
-  completedAt?: Date;
+  requirementsCompleted?: number;
+  totalRequirements?: number;
+  completedAt?: string;
   data?: MissionCompletionData;
 }
 
@@ -43,6 +45,9 @@ export interface MissionCompletionData {
   unit?: string;
   timestamp: Date;
   notes?: string;
+  requirementId?: string; // Which requirement was completed
+  pointsEarned?: number; // Points for this specific requirement
+  completedItems?: any[]; // Legacy, to be removed
 }
 
 // Level Progress
@@ -53,14 +58,15 @@ export interface LevelProgress {
   total: number;
   missions: Mission[];
   canLevelUp: boolean;
-  leveledUpAt?: Date;
+  leveledUpAt?: string;
 }
 
 // Game State
 export interface GameState {
+  id: string;
   userId: string;
-  date: string; // YYYY-MM-DD
-  currentTimeWindow: TimeWindow;
+  currentDate: string; // YYYY-MM-DD
+  currentTimeWindow?: TimeWindow;
   levels: {
     morning: {
       level1: LevelProgress;
@@ -84,10 +90,15 @@ export interface GameState {
     };
   };
   dailyPoints: number;
+  totalPoints: number;
   streakDays: number;
-  totalLevelUps: number;
+  unlockedAchievements: string[];
+  currentLevel: number;
+  lastActiveDate: string;
+  totalLevelUps?: number;
   cannabisStatus?: CannabisStatus;
-  dailyProgress?: Record<string, MissionProgress>;
+  dailyProgress: Record<string, MissionProgress>;
+  requirementProgress: Record<string, Record<string, boolean>>; // missionId -> requirementId -> completed
 }
 
 // Cannabis Integration
@@ -217,6 +228,7 @@ export interface DashboardProps {
   onMissionComplete: (missionId: string, data: MissionCompletionData) => Promise<MissionCompletionResponse>;
   onLevelUp: (level: Level, timeWindow: TimeWindow) => Promise<LevelUpResponse>;
   onCannabisUpdate: (consumption: CannabisConsumption) => void;
+  onReset?: () => void;
 }
 
 export interface MissionCardProps {
@@ -234,6 +246,7 @@ export interface MissionModalProps {
   onComplete: (data: MissionCompletionData) => void;
   suggestions: Suggestion[];
   cannabisStatus?: CannabisStatus;
+  requirementProgress?: Record<string, boolean>; // requirementId -> completed
 }
 
 export interface LevelUpCelebrationProps {
@@ -266,13 +279,6 @@ export interface CannabisStatusCardProps {
 }
 
 // Hooks
-export interface UseMissionProgressHook {
-  gameState: GameState;
-  updateProgress: (missionId: string, data: MissionCompletionData) => Promise<void>;
-  triggerLevelUp: (level: Level, timeWindow: TimeWindow) => Promise<void>;
-  loading: boolean;
-  error?: string;
-}
 
 export interface UseCannabisEffectsHook {
   status: CannabisStatus | null;

@@ -11,7 +11,7 @@ const MissionCard: React.FC<MissionCardProps> = ({
 }) => {
   const category = MISSION_CATEGORIES[mission.category];
   const isCompleted = progress.completed;
-  const progressPercentage = progress.progress;
+  const progressPercentage = progress.progress || 0;
   
   const getStatusColor = () => {
     if (isCompleted) return 'var(--theme-success, #10b981)';

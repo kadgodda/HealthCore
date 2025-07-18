@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { MissionModalProps, MissionCompletionData, MISSION_CATEGORIES } from '../../types/nutrition-game';
-import ModalPortal from '../common/ModalPortal';
 import styles from './MissionModal.module.css';
 
 const MissionModal: React.FC<MissionModalProps> = ({
@@ -9,7 +8,8 @@ const MissionModal: React.FC<MissionModalProps> = ({
   onClose,
   onComplete,
   suggestions,
-  cannabisStatus
+  cannabisStatus,
+  requirementProgress = {}
 }) => {
   const [completionType, setCompletionType] = useState<'supplement' | 'food' | 'activity' | 'custom'>('food');
   const [completionValue, setCompletionValue] = useState('');
@@ -19,6 +19,7 @@ const MissionModal: React.FC<MissionModalProps> = ({
   const [selectedQuickAction, setSelectedQuickAction] = useState<string | null>(null);
   const [longPressTimer, setLongPressTimer] = useState<NodeJS.Timeout | null>(null);
   const [completingAction, setCompletingAction] = useState<string | null>(null);
+  const [completedActions, setCompletedActions] = useState<Set<string>>(new Set());
 
   const category = MISSION_CATEGORIES[mission.category];
 
@@ -30,8 +31,18 @@ const MissionModal: React.FC<MissionModalProps> = ({
       setCompletionUnit('');
       setNotes('');
       setShowSuggestions(true);
+      
+      // Initialize completed actions based on requirement progress
+      const completed = new Set<string>();
+      mission.requirements.forEach((req, idx) => {
+        const requirementId = `${mission.id}-req-${idx}`;
+        if (requirementProgress[requirementId]) {
+          completed.add(`req-${idx}`);
+        }
+      });
+      setCompletedActions(completed);
     }
-  }, [isOpen]);
+  }, [isOpen, mission.id, requirementProgress]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,12 +58,14 @@ const MissionModal: React.FC<MissionModalProps> = ({
     onComplete(data);
   };
 
-  const handleQuickComplete = (type: MissionCompletionData['type'], value: string, unit?: string) => {
+  const handleQuickComplete = (type: MissionCompletionData['type'], value: string, unit?: string, requirementId?: string, pointsPerRequirement?: number) => {
     const data: MissionCompletionData = {
       type,
       value,
       unit,
-      timestamp: new Date()
+      timestamp: new Date(),
+      requirementId,
+      pointsEarned: pointsPerRequirement
     };
     
     onComplete(data);
@@ -60,7 +73,22 @@ const MissionModal: React.FC<MissionModalProps> = ({
 
   const getQuickActionsForMission = () => {
     // Return all mission requirements as actionable buttons
-    const actions = [];
+    const actions: Array<{
+      id: string;
+      icon: string;
+      label: string;
+      type: MissionCompletionData['type'];
+      value: string;
+      amount?: number;
+      unit?: string;
+      description?: string;
+      autoComplete: boolean;
+      requirementId: string;
+      pointsPerRequirement: number;
+    }> = [];
+    
+    // Calculate points per requirement (keep precision)
+    const pointsPerRequirement = mission.basePoints / mission.requirements.length;
     
     mission.requirements.forEach((req, idx) => {
       const icon = req.type === 'supplement' ? getSupplementIcon(req.target) :
@@ -71,12 +99,14 @@ const MissionModal: React.FC<MissionModalProps> = ({
         id: `req-${idx}`,
         icon: icon,
         label: formatRequirementName(req.target),
-        type: req.type,
+        type: req.type === 'timing' || req.type === 'amount' ? 'custom' : req.type,
         value: `${req.target} completed`,
         amount: req.amount,
         unit: req.unit,
         description: req.description,
-        autoComplete: true
+        autoComplete: true,
+        requirementId: `${mission.id}-req-${idx}`,
+        pointsPerRequirement: pointsPerRequirement
       });
     });
     
@@ -88,7 +118,9 @@ const MissionModal: React.FC<MissionModalProps> = ({
         label: 'Mark Complete',
         type: 'activity' as const,
         value: 'Mission completed',
-        autoComplete: true
+        autoComplete: true,
+        requirementId: `${mission.id}-complete`,
+        pointsPerRequirement: mission.basePoints
       });
     }
     
@@ -161,9 +193,8 @@ const MissionModal: React.FC<MissionModalProps> = ({
     );
   };
 
-  return (
-    <ModalPortal isOpen={isOpen}>
-      <div className={styles.modalOverlay} onClick={onClose}>
+  return isOpen ? (
+    <div className={styles.modalOverlay} onClick={onClose}>
         <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
           <button className={styles.closeButton} onClick={onClose}>
             ×
@@ -189,65 +220,82 @@ const MissionModal: React.FC<MissionModalProps> = ({
               <span className={styles.sectionHint}>Long press to complete</span>
             </div>
             <div className={styles.quickActionButtons}>
-              {getQuickActionsForMission().map((action, idx) => (
-                <button
-                  key={idx}
-                  className={`${styles.quickActionButton} ${completingAction === action.id ? styles.completing : ''}`}
-                  onClick={() => {
-                    // Quick click for info (future feature)
-                    console.log('Show supplement info for:', action.label);
-                  }}
-                  onMouseDown={() => {
-                    // Start long press timer
-                    const timer = setTimeout(() => {
-                      setCompletingAction(action.id);
-                      // Trigger completion after animation
-                      setTimeout(() => {
-                        handleQuickComplete(action.type, action.value, action.unit);
-                      }, 500);
-                    }, 800); // 800ms for long press
-                    setLongPressTimer(timer);
-                  }}
-                  onMouseUp={() => {
-                    // Cancel long press
-                    if (longPressTimer) {
-                      clearTimeout(longPressTimer);
-                      setLongPressTimer(null);
-                    }
-                  }}
-                  onMouseLeave={() => {
-                    // Cancel long press if mouse leaves
-                    if (longPressTimer) {
-                      clearTimeout(longPressTimer);
-                      setLongPressTimer(null);
-                    }
-                  }}
-                  onTouchStart={() => {
-                    // Mobile long press
-                    const timer = setTimeout(() => {
-                      setCompletingAction(action.id);
-                      setTimeout(() => {
-                        handleQuickComplete(action.type, action.value, action.unit);
-                      }, 500);
-                    }, 800);
-                    setLongPressTimer(timer);
-                  }}
-                  onTouchEnd={() => {
-                    if (longPressTimer) {
-                      clearTimeout(longPressTimer);
-                      setLongPressTimer(null);
-                    }
-                  }}
-                >
-                  <div className={styles.quickActionIcon}>{action.icon}</div>
-                  <div className={styles.quickActionLabel}>{action.label}</div>
-                  {action.amount && (
-                    <div className={styles.quickActionDose}>
-                      {action.amount}{action.unit}
-                    </div>
-                  )}
-                </button>
-              ))}
+              {getQuickActionsForMission().map((action, idx) => {
+                const isCompleted = completedActions.has(action.id);
+                return (
+                  <button
+                    key={idx}
+                    className={`${styles.quickActionButton} ${completingAction === action.id ? styles.completing : ''} ${isCompleted ? styles.completed : ''}`}
+                    onClick={() => {
+                      // Quick click for info (future feature)
+                      console.log('Show supplement info for:', action.label);
+                    }}
+                    onMouseDown={() => {
+                      // Start long press timer only if not already completed
+                      if (!isCompleted) {
+                        const timer = setTimeout(() => {
+                          setCompletingAction(action.id);
+                          // Trigger completion after animation
+                          setTimeout(() => {
+                            setCompletedActions(prev => new Set([...prev, action.id]));
+                            handleQuickComplete(action.type, action.value, action.unit, action.requirementId, action.pointsPerRequirement);
+                            setCompletingAction(null);
+                          }, 500);
+                        }, 800); // 800ms for long press
+                        setLongPressTimer(timer);
+                      }
+                    }}
+                    onMouseUp={() => {
+                      // Cancel long press
+                      if (longPressTimer) {
+                        clearTimeout(longPressTimer);
+                        setLongPressTimer(null);
+                      }
+                    }}
+                    onMouseLeave={() => {
+                      // Cancel long press if mouse leaves
+                      if (longPressTimer) {
+                        clearTimeout(longPressTimer);
+                        setLongPressTimer(null);
+                      }
+                    }}
+                    onTouchStart={() => {
+                      // Mobile long press
+                      if (!isCompleted) {
+                        const timer = setTimeout(() => {
+                          setCompletingAction(action.id);
+                          setTimeout(() => {
+                            setCompletedActions(prev => new Set([...prev, action.id]));
+                            handleQuickComplete(action.type, action.value, action.unit, action.requirementId, action.pointsPerRequirement);
+                            setCompletingAction(null);
+                          }, 500);
+                        }, 800);
+                        setLongPressTimer(timer);
+                      }
+                    }}
+                    onTouchEnd={() => {
+                      if (longPressTimer) {
+                        clearTimeout(longPressTimer);
+                        setLongPressTimer(null);
+                      }
+                    }}
+                    disabled={isCompleted}
+                  >
+                    <div className={styles.quickActionIcon}>{isCompleted ? '✅' : action.icon}</div>
+                    <div className={styles.quickActionLabel}>{action.label}</div>
+                    {action.amount && (
+                      <div className={styles.quickActionDose}>
+                        {action.amount}{action.unit}
+                      </div>
+                    )}
+                    {isCompleted && (
+                      <div className={styles.completedOverlay}>
+                        <span>Completed!</span>
+                      </div>
+                    )}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
@@ -292,8 +340,7 @@ const MissionModal: React.FC<MissionModalProps> = ({
         </div>
       </div>
     </div>
-    </ModalPortal>
-  );
+  ) : null;
 };
 
 export default MissionModal;

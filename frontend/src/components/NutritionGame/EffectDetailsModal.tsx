@@ -1,6 +1,5 @@
 import React from 'react';
 import { CannabisEffect } from '../../types/nutrition-game';
-import ModalPortal from '../common/ModalPortal';
 import styles from './EffectDetailsModal.module.css';
 
 interface EffectDetailsModalProps {
@@ -16,9 +15,8 @@ const EffectDetailsModal: React.FC<EffectDetailsModalProps> = ({
 }) => {
   if (!effect) return null;
 
-  return (
-    <ModalPortal isOpen={isOpen}>
-      <div className={styles.modalOverlay} onClick={onClose}>
+  return isOpen ? (
+    <div className={styles.modalOverlay} onClick={onClose}>
         <div 
           className={styles.modalContent} 
           onClick={e => e.stopPropagation()}
@@ -72,8 +70,7 @@ const EffectDetailsModal: React.FC<EffectDetailsModalProps> = ({
           </div>
         </div>
       </div>
-    </ModalPortal>
-  );
+  ) : null;
 };
 
 export default EffectDetailsModal;

@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { LevelUpCelebrationProps, LEVEL_NAMES } from '../../types/nutrition-game';
-import ModalPortal from '../common/ModalPortal';
 import styles from './LevelUpCelebration.module.css';
 
 const LevelUpCelebration: React.FC<LevelUpCelebrationProps> = ({
@@ -53,9 +52,8 @@ const LevelUpCelebration: React.FC<LevelUpCelebrationProps> = ({
     }
   };
 
-  return (
-    <ModalPortal isOpen={isOpen}>
-      <div className={styles.celebrationOverlay}>
+  return isOpen ? (
+    <div className={styles.celebrationOverlay}>
       {/* Confetti Background */}
       <div className={styles.confettiContainer}>
         {[...Array(50)].map((_, i) => (
@@ -153,8 +151,7 @@ const LevelUpCelebration: React.FC<LevelUpCelebrationProps> = ({
         </button>
       </div>
     </div>
-    </ModalPortal>
-  );
+  ) : null;
 };
 
 export default LevelUpCelebration;

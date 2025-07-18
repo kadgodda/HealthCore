@@ -20,9 +20,9 @@ const createInitialGameState = (): GameState => {
         level: 1,
         timeWindow: window,
         missions: level1Missions,
-        completed: window === 'morning' ? 2 : 0, // 2 completed in morning for demo
+        completed: 0, // Start fresh with no completions
         total: level1Missions.length,
-        canLevelUp: window === 'morning' && level1Missions.length === 4, // Can level up if 3/4 complete
+        canLevelUp: false,
         progress: {}
       },
       level2: {
@@ -51,40 +51,11 @@ const createInitialGameState = (): GameState => {
     userId: 'demo-user',
     currentDate: now.toISOString().split('T')[0],
     levels,
-    dailyProgress: {
-      // Pre-populate some completed missions for demo
-      'morning-l1-hydration': {
-        missionId: 'morning-l1-hydration',
-        completed: true,
-        progress: 100,
-        completedAt: new Date().toISOString(),
-        completedRequirements: [{
-          requirementId: 'water-16oz',
-          completedValue: '18',
-          completedUnit: 'oz'
-        }]
-      },
-      'morning-l1-movement': {
-        missionId: 'morning-l1-movement',
-        completed: true,
-        progress: 100,
-        completedAt: new Date(Date.now() - 30 * 60 * 1000).toISOString(), // 30 mins ago
-        completedRequirements: [{
-          requirementId: 'cardio-10min',
-          completedValue: '12',
-          completedUnit: 'minutes'
-        }]
-      },
-      'morning-l1-iron': {
-        missionId: 'morning-l1-iron',
-        completed: false,
-        progress: 60,
-        startedAt: new Date(Date.now() - 15 * 60 * 1000).toISOString() // 15 mins ago
-      }
-    },
-    dailyPoints: 110, // 50 + 60 from completed missions
-    totalPoints: 847,
-    streakDays: 5,
+    dailyProgress: {}, // Start with empty progress
+    requirementProgress: {}, // Track individual requirements
+    dailyPoints: 0, // Start with 0 points
+    totalPoints: 0,
+    streakDays: 0,
     unlockedAchievements: [],
     currentLevel: 1,
     lastActiveDate: now.toISOString()
@@ -95,52 +66,86 @@ const NutritionGameWrapper: React.FC = () => {
   const [gameState, setGameState] = useState<GameState>(createInitialGameState());
 
   const handleMissionComplete = async (missionId: string, data: MissionCompletionData) => {
-    console.log('Mission completed:', missionId, data);
     
-    // Find the mission to get base points
-    let basePoints = 80; // default
-    gameState.levels.morning.level1.missions.forEach(m => {
-      if (m.id === missionId) basePoints = m.basePoints;
-    });
-    gameState.levels.morning.level2.missions.forEach(m => {
-      if (m.id === missionId) basePoints = m.basePoints;
-    });
-    gameState.levels.morning.level3.missions.forEach(m => {
-      if (m.id === missionId) basePoints = m.basePoints;
-    });
-    
-    const pointsEarned = data.pointsEarned || basePoints;
-    
-    // Update game state
+    // Handle requirement completion
     setGameState(prev => {
-      const newState = {
-        ...prev,
-        dailyProgress: {
-          ...prev.dailyProgress,
-          [missionId]: {
-            missionId,
-            completed: true,
-            progress: 100,
-            completedAt: new Date().toISOString(),
-            completedRequirements: data.completedItems
-          }
-        },
-        dailyPoints: prev.dailyPoints + pointsEarned,
-        totalPoints: prev.totalPoints + pointsEarned
-      };
+      const newState = { ...prev };
       
-      // Update level completion counts
-      const timeWindow = missionId.split('-')[0] as TimeWindow;
-      const level = parseInt(missionId.split('-')[1].replace('l', '')) as Level;
-      const levelKey = `level${level}` as 'level1' | 'level2' | 'level3';
+      // Initialize requirement progress if needed
+      if (!newState.requirementProgress[missionId]) {
+        newState.requirementProgress[missionId] = {};
+      }
       
-      if (newState.levels[timeWindow] && newState.levels[timeWindow][levelKey]) {
-        newState.levels[timeWindow][levelKey].completed += 1;
+      // Mark requirement as completed
+      if (data.requirementId) {
+        newState.requirementProgress[missionId][data.requirementId] = true;
+      }
+      
+      // Award points for this requirement
+      const pointsEarned = data.pointsEarned || 0;
+      newState.dailyPoints = prev.dailyPoints + pointsEarned;
+      newState.totalPoints = prev.totalPoints + pointsEarned;
+      
+      // Find the mission to check if all requirements are complete
+      let mission = null;
+      let timeWindow: TimeWindow | null = null;
+      let level: Level | null = null;
+      
+      // Search for the mission across all levels and time windows
+      Object.entries(newState.levels).forEach(([tw, levels]) => {
+        Object.entries(levels).forEach(([lvl, levelData]) => {
+          levelData.missions.forEach(m => {
+            if (m.id === missionId) {
+              mission = m;
+              timeWindow = tw as TimeWindow;
+              level = parseInt(lvl.replace('level', '')) as Level;
+            }
+          });
+        });
+      });
+      
+      if (mission && timeWindow && level) {
+        // Check if all requirements are completed
+        const requirementIds = mission.requirements.map((_, idx) => `${missionId}-req-${idx}`);
+        const allRequirementsComplete = requirementIds.every(reqId => 
+          newState.requirementProgress[missionId]?.[reqId] === true
+        );
         
-        // Check if can level up
-        const levelData = newState.levels[timeWindow][levelKey];
-        if (levelData.completed === levelData.total) {
-          levelData.canLevelUp = true;
+        // Initialize mission progress if needed
+        if (!newState.dailyProgress[missionId]) {
+          newState.dailyProgress[missionId] = {
+            missionId,
+            completed: false,
+            progress: 0,
+            requirementsCompleted: 0,
+            totalRequirements: mission.requirements.length
+          };
+        }
+        
+        // Update mission progress
+        const completedCount = requirementIds.filter(reqId => 
+          newState.requirementProgress[missionId]?.[reqId] === true
+        ).length;
+        
+        newState.dailyProgress[missionId].requirementsCompleted = completedCount;
+        newState.dailyProgress[missionId].progress = Math.round((completedCount / mission.requirements.length) * 100);
+        
+        // If all requirements are complete and mission wasn't already marked complete
+        if (allRequirementsComplete && !newState.dailyProgress[missionId].completed) {
+          newState.dailyProgress[missionId].completed = true;
+          newState.dailyProgress[missionId].completedAt = new Date().toISOString();
+          
+          // Update level completion count
+          const levelKey = `level${level}` as 'level1' | 'level2' | 'level3';
+          if (newState.levels[timeWindow] && newState.levels[timeWindow][levelKey]) {
+            newState.levels[timeWindow][levelKey].completed += 1;
+            
+            // Check if can level up
+            const levelData = newState.levels[timeWindow][levelKey];
+            if (levelData.completed >= levelData.total && !levelData.canLevelUp) {
+              levelData.canLevelUp = true;
+            }
+          }
         }
       }
       
@@ -150,20 +155,27 @@ const NutritionGameWrapper: React.FC = () => {
     // Return success response
     return {
       success: true,
-      pointsEarned: pointsEarned,
+      pointsEarned: data.pointsEarned || 0,
       newAchievements: [],
       levelUpAvailable: false
     };
   };
 
   const handleLevelUp = async (level: Level, timeWindow: TimeWindow) => {
-    console.log('Level up:', level, timeWindow);
     
     // Update game state
-    setGameState(prev => ({
-      ...prev,
-      currentLevel: Math.max(prev.currentLevel, level + 1)
-    }));
+    setGameState(prev => {
+      const newState = { ...prev };
+      newState.currentLevel = Math.max(prev.currentLevel, level + 1);
+      
+      // Mark the level as completed
+      const levelKey = `level${level}` as 'level1' | 'level2' | 'level3';
+      if (newState.levels[timeWindow] && newState.levels[timeWindow][levelKey]) {
+        newState.levels[timeWindow][levelKey].leveledUpAt = new Date().toISOString();
+      }
+      
+      return newState;
+    });
 
     // Return success response
     return {
@@ -175,8 +187,12 @@ const NutritionGameWrapper: React.FC = () => {
   };
 
   const handleCannabisUpdate = (consumption: CannabisConsumption) => {
-    console.log('Cannabis consumption updated:', consumption);
     // Handle cannabis update logic here
+  };
+  
+  // Debug function to reset state
+  const resetGameState = () => {
+    setGameState(createInitialGameState());
   };
 
   return (
@@ -186,6 +202,7 @@ const NutritionGameWrapper: React.FC = () => {
       onMissionComplete={handleMissionComplete}
       onLevelUp={handleLevelUp}
       onCannabisUpdate={handleCannabisUpdate}
+      onReset={resetGameState}
     />
   );
 };

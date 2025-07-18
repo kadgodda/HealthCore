@@ -146,22 +146,28 @@ const App: React.FC = () => {
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseLeave}
       >
-        <div 
-          className={styles.pageContainer}
-          style={{
-            transform: `translateX(calc(${-currentPageIndex * 100}% + ${swipeOffset}px))`,
-            transition: isTransitioning ? 'transform 0.3s ease-out' : 'none'
-          }}
-        >
-          {pages.map((page, index) => {
-            const PageComponent = page.component;
-            return (
-              <div key={page.id} className={styles.page}>
-                <PageComponent />
-              </div>
-            );
-          })}
-        </div>
+        {pages.map((page, index) => {
+          const PageComponent = page.component;
+          const isActive = index === currentPageIndex;
+          const offset = (index - currentPageIndex) * 100;
+          
+          return (
+            <div 
+              key={page.id} 
+              className={styles.page}
+              style={{
+                position: 'absolute',
+                width: '100%',
+                height: '100%',
+                transform: `translateX(calc(${offset}% + ${swipeOffset}px))`,
+                transition: isTransitioning ? 'transform 0.3s ease-out' : 'none',
+                visibility: Math.abs(index - currentPageIndex) > 1 ? 'hidden' : 'visible'
+              }}
+            >
+              <PageComponent />
+            </div>
+          );
+        })}
       </main>
 
       {/* Page Indicators */}

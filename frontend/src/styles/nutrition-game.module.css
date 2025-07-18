@@ -193,6 +193,34 @@
   background: var(--brand-secondary);
 }
 
+/* Header Actions */
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.resetButton {
+  padding: var(--space-2) var(--space-4);
+  background: var(--theme-bg-elevated);
+  color: var(--theme-text-secondary);
+  border: 1px solid var(--theme-border);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.resetButton:hover {
+  background: var(--theme-error);
+  color: white;
+  border-color: var(--theme-error);
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .dashboard {

@@ -47,23 +47,23 @@ const ProgressOverview: React.FC<ProgressOverviewProps> = ({
           </div>
         </div>
         
-        {progress.canLevelUp && !progress.leveledUpAt && (
-          <button 
-            className={styles.levelUpButton}
-            onClick={onLevelUp}
-            style={{ 
-              background: getLevelColor(),
-              animation: 'pulse 2s infinite'
-            }}
-          >
-            Level Up! 🎉
-          </button>
-        )}
-        
-        {progress.leveledUpAt && (
-          <div className={styles.completedBadge} style={{ borderColor: getLevelColor() }}>
-            <span>✓</span> Completed
-          </div>
+        {progress.canLevelUp && (
+          progress.leveledUpAt ? (
+            <div className={styles.completedBadge} style={{ borderColor: getLevelColor() }}>
+              <span>✓</span> Completed
+            </div>
+          ) : (
+            <button 
+              className={styles.levelUpButton}
+              onClick={onLevelUp}
+              style={{ 
+                background: getLevelColor(),
+                animation: 'pulse 2s infinite'
+              }}
+            >
+              Level Up! 🎉
+            </button>
+          )
         )}
       </div>
       
