@@ -5,6 +5,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import logging
 
+# Import routers
+from routers import missions, game, receptors
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -49,6 +52,12 @@ async def root():
 async def health_check():
     """Health check endpoint."""
     return {"status": "healthy"}
+
+
+# Include routers
+app.include_router(missions.router)
+app.include_router(game.router)
+app.include_router(receptors.router)
 
 
 if __name__ == "__main__":
