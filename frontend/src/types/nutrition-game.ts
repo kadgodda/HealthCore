@@ -18,7 +18,7 @@ export interface Mission {
   targetReceptors: string[];
   basePoints: number;
   requirements: MissionRequirement[];
-  category: 'hydration' | 'minerals' | 'vitamins' | 'movement' | 'protein' | 'fats';
+  category: 'hydration' | 'minerals' | 'vitamins' | 'movement' | 'protein' | 'fats' | 'amino_acids' | 'special' | 'energy' | 'timing';
 }
 
 export interface MissionRequirement {
@@ -350,5 +350,9 @@ export const MISSION_CATEGORIES = {
   vitamins: { icon: '🍊', color: '#f59e0b' },
   movement: { icon: '🏃', color: '#10b981' },
   protein: { icon: '🍳', color: '#8b5cf6' },
-  fats: { icon: '🥑', color: '#ec4899' }
+  fats: { icon: '🥑', color: '#ec4899' },
+  amino_acids: { icon: '🧬', color: '#06b6d4' },
+  special: { icon: '✨', color: '#a855f7' },
+  energy: { icon: '🔋', color: '#f97316' },
+  timing: { icon: '⏰', color: '#6366f1' }
 } as const;

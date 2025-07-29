@@ -49,16 +49,15 @@ const NutritionGameWrapper: React.FC = () => {
         
         if (!mounted) return;
         
-        // Load missions for current level and time window
-        const level = gameState.currentLevel as Level;
-        await fetchMissions(currentTimeWindow, level);
+        // Load missions for ALL time windows and ALL levels
+        const timeWindows: TimeWindow[] = ['morning', 'midday', 'afternoon', 'evening'];
+        const levels: Level[] = [1, 2, 3];
         
-        if (!mounted) return;
-        
-        // Load missions for all levels in current time window
-        for (let i = 1; i <= 3; i++) {
-          if (!mounted) return;
-          await fetchMissions(currentTimeWindow, i as Level);
+        for (const window of timeWindows) {
+          for (const level of levels) {
+            if (!mounted) return;
+            await fetchMissions(window, level);
+          }
         }
       } catch (error) {
         console.error('Failed to load initial data:', error);
@@ -153,6 +152,10 @@ const NutritionGameWrapper: React.FC = () => {
   const transformGameState = () => {
     const currentDate = new Date().toISOString().split('T')[0];
     
+    // Debug log to see what missions we have
+    console.log('Missions data:', missions);
+    console.log('Current time window:', currentTimeWindow);
+    
     // Build the complex levels structure expected by DailyReceptorDashboard
     const levels = {} as any;
     
@@ -164,6 +167,11 @@ const NutritionGameWrapper: React.FC = () => {
       [1, 2, 3].forEach((level) => {
         const levelKey = `level${level}`;
         const missionsList = missions[window as TimeWindow]?.[levelKey as `level${Level}`] || [];
+        
+        // Debug specific window/level
+        if (window === currentTimeWindow) {
+          console.log(`Missions for ${window} ${levelKey}:`, missionsList);
+        }
         
         levels[window][levelKey] = {
           level: level as Level,
@@ -224,7 +232,8 @@ const NutritionGameWrapper: React.FC = () => {
   }
 
   // Transform game state if we have missions loaded
-  const transformedGameState = missions[currentTimeWindow] ? transformGameState() : null;
+  const hasMissions = Object.keys(missions).length > 0;
+  const transformedGameState = hasMissions ? transformGameState() : null;
 
   // Show loading if no game state
   if (!transformedGameState) {
