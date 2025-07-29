@@ -76,6 +76,15 @@ const NutritionGameWrapper: React.FC = () => {
   // Handle mission completion
   const handleMissionComplete = async (missionId: string, data: MissionCompletionData) => {
     await updateMissionProgress(missionId, data);
+    
+    // Return the expected response format
+    return {
+      success: true,
+      pointsEarned: data.pointsEarned || 0,
+      newLevelUnlocked: false,
+      nextSuggestions: [],
+      updatedGameState: transformGameState()
+    };
   };
 
   // Handle level up
@@ -84,22 +93,32 @@ const NutritionGameWrapper: React.FC = () => {
       const result = await levelUp(level, timeWindow);
       
       // Return level up data for celebration modal
+      const defaultInsight = {
+        id: `level-${level}-${timeWindow}`,
+        level: `Level ${level + 1}`,
+        timeWindow,
+        title: 'Level Up!',
+        subtitle: 'Achievement Unlocked',
+        content: `Congratulations! You've reached Level ${level + 1} in the ${timeWindow} window.`,
+        highlights: [
+          {
+            value: `${gameState.totalPoints}`,
+            label: 'Total Points',
+            explanation: 'Keep up the great work!'
+          }
+        ]
+      };
+      
       return {
         success: true,
-        newLevel: level + 1,
-        unlockedMissions: [],
-        specialRewards: [],
-        insight: result.insight,
+        insight: result.insight || defaultInsight,
         achievements: result.achievements || [],
-        bonusPoints: result.bonusPoints || 0,
+        bonusPoints: result.bonusPoints || 100,
         nextLevelMissions: []
       };
     } catch (error) {
       console.error('Failed to level up:', error);
-      return {
-        success: false,
-        error: 'Failed to level up'
-      };
+      throw error; // Let the component handle the error
     }
   };
 
@@ -130,6 +149,53 @@ const NutritionGameWrapper: React.FC = () => {
     };
   };
 
+  // Transform backend game state to frontend format
+  const transformGameState = () => {
+    const currentDate = new Date().toISOString().split('T')[0];
+    
+    // Build the complex levels structure expected by DailyReceptorDashboard
+    const levels = {} as any;
+    
+    // Initialize all time windows
+    ['morning', 'midday', 'afternoon', 'evening'].forEach((window) => {
+      levels[window] = {};
+      
+      // Initialize all levels for each time window
+      [1, 2, 3].forEach((level) => {
+        const levelKey = `level${level}`;
+        const missionsList = missions[window as TimeWindow]?.[levelKey as `level${Level}`] || [];
+        
+        levels[window][levelKey] = {
+          level: level as Level,
+          timeWindow: window as TimeWindow,
+          completed: gameState.levelProgress[levelKey]?.completed || 0,
+          total: missionsList.length || gameState.levelProgress[levelKey]?.total || 4,
+          missions: missionsList,
+          canLevelUp: gameState.levelProgress[levelKey]?.canLevelUp || false,
+          leveledUpAt: gameState.levelProgress[levelKey]?.leveledUpAt
+        };
+      });
+    });
+    
+    return {
+      id: gameState.userId + '-' + currentDate,
+      userId: gameState.userId,
+      currentDate,
+      currentTimeWindow,
+      levels,
+      dailyPoints: gameState.totalPoints,
+      totalPoints: gameState.totalPoints,
+      streakDays: 0, // TODO: Calculate from backend
+      unlockedAchievements: gameState.achievements || [],
+      currentLevel: gameState.currentLevel,
+      lastActiveDate: currentDate,
+      totalLevelUps: 0,
+      cannabisStatus,
+      dailyProgress: gameState.missionProgress || {},
+      requirementProgress: gameState.requirementProgress || {}
+    };
+  };
+
   // Show loading state
   if (isLoading && !missions[currentTimeWindow]) {
     return (
@@ -157,19 +223,27 @@ const NutritionGameWrapper: React.FC = () => {
     );
   }
 
+  // Transform game state if we have missions loaded
+  const transformedGameState = missions[currentTimeWindow] ? transformGameState() : null;
+
+  // Show loading if no game state
+  if (!transformedGameState) {
+    return (
+      <Card className="min-h-screen flex items-center justify-center">
+        <Spinner size="lg" />
+        <p className="ml-4">Initializing game state...</p>
+      </Card>
+    );
+  }
+
   return (
     <div className="nutrition-game-wrapper">
       <DailyReceptorDashboard
-        currentLevel={gameState.currentLevel as Level}
-        totalPoints={gameState.totalPoints}
-        levelProgress={gameState.levelProgress}
-        requirementProgress={gameState.requirementProgress}
-        missions={getMissionsForDisplay()}
-        cannabisStatus={cannabisStatus}
+        userId={gameState.userId}
+        initialGameState={transformedGameState}
         onMissionComplete={handleMissionComplete}
         onLevelUp={handleLevelUp}
         onCannabisUpdate={handleCannabisUpdate}
-        onCannabisToggle={handleCannabisToggle}
         onReset={handleReset}
       />
     </div>
