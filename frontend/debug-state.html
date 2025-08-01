@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Frontend State</title>
+</head>
+<body>
+    <h1>Frontend State Debug</h1>
+    <div id="results"></div>
+    
+    <script>
+        const resultsDiv = document.getElementById('results');
+        
+        // Open the main app in an iframe to inspect it
+        resultsDiv.innerHTML = `
+            <h2>Testing Frontend State</h2>
+            <p>Check the console for detailed information</p>
+            <iframe id="app-frame" src="http://localhost:5173" width="100%" height="600" style="border: 1px solid #ccc;"></iframe>
+        `;
+        
+        // Wait for iframe to load
+        setTimeout(() => {
+            // Try to access the iframe content
+            try {
+                const iframe = document.getElementById('app-frame');
+                const iframeWindow = iframe.contentWindow;
+                
+                // Check if React is loaded
+                if (iframeWindow.React) {
+                    console.log('React is loaded in iframe');
+                }
+                
+                // Check for Zustand
+                if (iframeWindow.__zustand) {
+                    console.log('Zustand store found:', iframeWindow.__zustand);
+                }
+            } catch (e) {
+                console.log('Cannot access iframe due to same-origin policy');
+            }
+            
+            // Test API directly
+            fetch('http://localhost:8000/api/missions/morning/1')
+                .then(r => r.json())
+                .then(data => {
+                    resultsDiv.innerHTML += `<p style="color: green;">✓ API is working: ${data.count} missions found</p>`;
+                })
+                .catch(e => {
+                    resultsDiv.innerHTML += `<p style="color: red;">✗ API Error: ${e.message}</p>`;
+                });
+        }, 2000);
+    </script>
+</body>
+</html>

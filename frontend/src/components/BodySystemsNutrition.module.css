@@ -2,10 +2,10 @@
 
 .container {
   font-family: -webkit-system-font, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--gradient-primary);
   min-height: 100vh;
   padding: 1.5rem;
-  color: #1e293b;
+  color: var(--theme-text-primary);
 }
 
 /* Header Section */
@@ -15,7 +15,7 @@
 
 .mainHeader {
   text-align: center;
-  color: white;
+  color: var(--theme-text-primary);
   margin-bottom: 1.5rem;
 }
 
@@ -33,9 +33,9 @@
 
 /* Daily Score Card */
 .scoreCard {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--gradient-primary);
   border-radius: 0.5rem;
-  color: white;
+  color: var(--theme-text-primary);
   max-width: 1200px;
   margin: 0 auto 1.5rem auto;
 }
@@ -51,12 +51,12 @@
   width: 6rem;
   height: 6rem;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--theme-bg-overlay);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  border: 2px solid var(--theme-border);
   flex-shrink: 0;
 }
 
@@ -117,14 +117,14 @@
 .mainContent {
   max-width: 1200px;
   margin: 0 auto 2rem auto;
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--theme-bg-elevated);
   backdrop-filter: blur(15px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--theme-border);
 }
 
 .systemSubtitle {
   text-align: center;
-  color: #64748b;
+  color: var(--theme-text-secondary);
   margin: 0.5rem 0 0 0;
   font-size: 0.875rem;
 }
@@ -132,7 +132,7 @@
 /* Expert Card */
 .expertCard {
   margin-bottom: 2rem;
-  background: #f8fafc;
+  background: var(--theme-bg-secondary);
 }
 
 .expertHeader {
@@ -145,7 +145,7 @@
   width: 3rem;
   height: 3rem;
   border-radius: 50%;
-  background: linear-gradient(135deg, #ff6b9d, #c44569);
+  background: var(--gradient-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -160,19 +160,19 @@
   margin: 0;
   font-size: 1rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--theme-text-primary);
 }
 
 .expertTitle {
   margin: 0.125rem 0 0 0;
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--theme-text-secondary);
 }
 
 .expertCommentary {
   font-size: 0.875rem;
   line-height: 1.5;
-  color: #1e293b;
+  color: var(--theme-text-primary);
   margin: 0;
 }
 
@@ -184,7 +184,7 @@
 }
 
 .receptorCluster {
-  background: #f8fafc;
+  background: var(--theme-bg-secondary);
   transition: all 0.15s ease;
 }
 
@@ -207,7 +207,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 0.5rem;
-  background: white;
+  background: var(--theme-bg-elevated);
 }
 
 .clusterTitle {
@@ -216,7 +216,7 @@
 }
 
 .clusterDescription {
-  color: #64748b;
+  color: var(--theme-text-secondary);
   font-size: 0.8125rem;
   margin: 0 0 1rem 0;
   line-height: 1.4;
@@ -233,7 +233,7 @@
   align-items: center;
   margin-bottom: 0.5rem;
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--theme-text-secondary);
 }
 
 /* Nutrient Tags */
@@ -243,7 +243,7 @@
   gap: 0.375rem;
   margin-top: 0.75rem;
   padding-top: 0.75rem;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--theme-border);
 }
 
 /* Modal Styles */
@@ -262,7 +262,7 @@
 .sectionTitle {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--theme-text-primary);
   margin: 0 0 0.75rem 0;
   display: flex;
   align-items: center;
@@ -272,7 +272,7 @@
 .sectionContent {
   font-size: 0.8125rem;
   line-height: 1.5;
-  color: #1e293b;
+  color: var(--theme-text-primary);
   margin: 0;
 }
 
@@ -284,7 +284,7 @@
   font-size: 0.8125rem;
   font-weight: 600;
   margin: 0 0 0.5rem 0;
-  color: #1e293b;
+  color: var(--theme-text-primary);
 }
 
 .receptorList ul {
@@ -296,8 +296,8 @@
 .receptorList li {
   padding: 0.375rem 0;
   font-size: 0.75rem;
-  color: #64748b;
-  border-bottom: 1px solid #f8fafc;
+  color: var(--theme-text-secondary);
+  border-bottom: 1px solid var(--theme-border);
 }
 
 .statusDetails {
@@ -321,8 +321,8 @@
   padding: 0.5rem 0;
   font-size: 0.8125rem;
   line-height: 1.5;
-  color: #1e293b;
-  border-bottom: 1px solid #f8fafc;
+  color: var(--theme-text-primary);
+  border-bottom: 1px solid var(--theme-border);
 }
 
 /* Loading State */
@@ -333,7 +333,7 @@
   align-items: center;
   justify-content: center;
   gap: 1rem;
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--theme-bg-elevated);
   backdrop-filter: blur(15px);
   max-width: 600px;
   margin: 0 auto;
@@ -345,7 +345,7 @@
   bottom: 1.25rem;
   right: 1.25rem;
   z-index: 100;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
 }
 
 /* Responsive */

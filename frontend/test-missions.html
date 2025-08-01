@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mission Data Test</title>
+</head>
+<body>
+    <h1>Testing Mission Data Loading</h1>
+    <div id="results"></div>
+    
+    <script>
+        const resultsDiv = document.getElementById('results');
+        
+        async function testMissionLoading() {
+            resultsDiv.innerHTML = '<h2>Testing Mission API...</h2>';
+            
+            const timeWindows = ['morning', 'midday', 'afternoon', 'evening'];
+            const levels = [1, 2, 3];
+            
+            for (const window of timeWindows) {
+                resultsDiv.innerHTML += `<h3>${window.toUpperCase()}</h3>`;
+                
+                for (const level of levels) {
+                    try {
+                        const response = await fetch(`http://localhost:8000/api/missions/${window}/${level}`);
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            resultsDiv.innerHTML += `
+                                <p style="color: green;">
+                                    ✓ Level ${level}: ${data.count} missions
+                                    ${data.data.length > 0 ? ` (${data.data.map(m => m.title).join(', ')})` : ''}
+                                </p>
+                            `;
+                        } else {
+                            resultsDiv.innerHTML += `<p style="color: red;">✗ Level ${level}: Failed</p>`;
+                        }
+                    } catch (error) {
+                        resultsDiv.innerHTML += `<p style="color: red;">✗ Level ${level}: ${error.message}</p>`;
+                    }
+                }
+            }
+            
+            // Test current time detection
+            const hour = new Date().getHours();
+            let currentWindow = 'evening';
+            if (hour >= 5 && hour < 11) currentWindow = 'morning';
+            else if (hour >= 11 && hour < 14) currentWindow = 'midday';
+            else if (hour >= 14 && hour < 17) currentWindow = 'afternoon';
+            
+            resultsDiv.innerHTML += `<h3>Current Time Window</h3>`;
+            resultsDiv.innerHTML += `<p>Hour: ${hour}, Window: ${currentWindow}</p>`;
+        }
+        
+        testMissionLoading();
+    </script>
+</body>
+</html>

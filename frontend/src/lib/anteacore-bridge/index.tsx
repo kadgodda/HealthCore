@@ -6,6 +6,9 @@
 import React from 'react';
 import progressBarStyles from './ProgressBar.module.css';
 
+// Import all CSS modules to ensure theme variables work
+import './import-styles';
+
 // Import components from AnteaCore
 export { 
   Card,

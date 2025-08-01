@@ -41,6 +41,7 @@
 .nav {
   display: flex;
   gap: 0.5rem;
+  align-items: center;
 }
 
 .navButton {
@@ -76,6 +77,38 @@
 
 .navTitle {
   display: none;
+}
+
+/* Theme Toggle */
+.themeToggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-left: 0.5rem;
+  padding: 0;
+  background: var(--theme-bg-elevated, #1e2442);
+  border: 1px solid var(--theme-border, #2d3561);
+  border-radius: 50%;
+  color: var(--theme-text-primary, #e2e8f0);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.themeToggle:hover {
+  background: var(--theme-bg-primary, #0a0e27);
+  border-color: var(--theme-border-hover, #4a5578);
+  transform: scale(1.05);
+}
+
+.themeToggle:active {
+  transform: scale(0.95);
+}
+
+.themeIcon {
+  font-size: 1.25rem;
+  line-height: 1;
 }
 
 /* Main Content */

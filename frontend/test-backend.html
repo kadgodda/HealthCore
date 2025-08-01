@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Backend Connection Test</title>
+</head>
+<body>
+    <h1>Testing Backend Connection</h1>
+    <div id="results"></div>
+    
+    <script>
+        const resultsDiv = document.getElementById('results');
+        
+        async function testBackend() {
+            resultsDiv.innerHTML = '<p>Testing connection...</p>';
+            
+            try {
+                // Test 1: Health endpoint
+                const healthResponse = await fetch('http://localhost:8000/health');
+                const healthData = await healthResponse.json();
+                resultsDiv.innerHTML += `<p style="color: green;">✓ Health check: ${JSON.stringify(healthData)}</p>`;
+                
+                // Test 2: Missions endpoint
+                const missionsResponse = await fetch('http://localhost:8000/api/missions/morning/1');
+                const missionsData = await missionsResponse.json();
+                resultsDiv.innerHTML += `<p style="color: green;">✓ Missions loaded: ${missionsData.count} missions found</p>`;
+                
+                // Test 3: Game state endpoint  
+                const gameResponse = await fetch('http://localhost:8000/api/game/state/demo-user');
+                const gameData = await gameResponse.json();
+                resultsDiv.innerHTML += `<p style="color: green;">✓ Game state loaded: Level ${gameData.data.currentLevel}</p>`;
+                
+            } catch (error) {
+                resultsDiv.innerHTML += `<p style="color: red;">✗ Error: ${error.message}</p>`;
+                console.error('Backend test error:', error);
+            }
+        }
+        
+        testBackend();
+    </script>
+</body>
+</html>

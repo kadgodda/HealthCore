@@ -3,6 +3,8 @@ import BodySystemsNutrition from './components/BodySystemsNutrition';
 import NutritionGameWrapper from './components/NutritionGame/NutritionGameWrapper';
 import styles from './App.module.css';
 
+type Theme = 'light' | 'dark' | 'sepia';
+
 interface Page {
   id: string;
   title: string;
@@ -29,9 +31,36 @@ const App: React.FC = () => {
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const [swipeOffset, setSwipeOffset] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [theme, setTheme] = useState<Theme>(() => {
+    // Load theme from localStorage or default to 'light'
+    const savedTheme = localStorage.getItem('healthcore-theme') as Theme;
+    return savedTheme || 'light';
+  });
   const containerRef = useRef<HTMLDivElement>(null);
   const startXRef = useRef<number | null>(null);
   const startTimeRef = useRef<number | null>(null);
+
+  // Apply theme class to body element
+  useEffect(() => {
+    document.body.className = `theme-${theme}`;
+    localStorage.setItem('healthcore-theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    const themes: Theme[] = ['light', 'dark', 'sepia'];
+    const currentIndex = themes.indexOf(theme);
+    const nextIndex = (currentIndex + 1) % themes.length;
+    setTheme(themes[nextIndex]);
+  };
+
+  const getThemeIcon = () => {
+    switch (theme) {
+      case 'light': return '☀️';
+      case 'dark': return '🌙';
+      case 'sepia': return '📖';
+      default: return '☀️';
+    }
+  };
 
   const handleTouchStart = (e: React.TouchEvent) => {
     startXRef.current = e.touches[0].clientX;
@@ -130,6 +159,14 @@ const App: React.FC = () => {
                 <span className={styles.navTitle}>{page.title}</span>
               </button>
             ))}
+            <button
+              className={styles.themeToggle}
+              onClick={toggleTheme}
+              aria-label={`Switch to ${theme === 'light' ? 'dark' : theme === 'dark' ? 'sepia' : 'light'} theme`}
+              title={`Current theme: ${theme}`}
+            >
+              <span className={styles.themeIcon}>{getThemeIcon()}</span>
+            </button>
           </nav>
         </div>
       </header>
