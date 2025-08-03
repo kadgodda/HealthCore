@@ -12,11 +12,10 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  background: var(--theme-bg-elevated, #1e2442);
-  border-bottom: 1px solid var(--theme-border, #2d3561);
+  background: var(--theme-bg-elevated);
+  border-bottom: 1px solid var(--theme-border);
   padding: 1rem;
   backdrop-filter: blur(10px);
-  background: rgba(30, 36, 66, 0.95);
 }
 
 .headerContent {

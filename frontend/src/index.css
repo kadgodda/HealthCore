@@ -49,6 +49,12 @@ body {
   --brand-secondary: #8b5cf6;
   --brand-accent: #ec4899;
   
+  /* RGB versions for opacity use */
+  --brand-accent-rgb: 236, 72, 153;
+  --theme-warning-rgb: 245, 158, 11;
+  --theme-success-rgb: 16, 185, 129;
+  --theme-error-rgb: 239, 68, 68;
+  
   /* Gradients */
   --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);

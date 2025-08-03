@@ -1,27 +1,7 @@
 /* HealthCore Nutrition Game Styles */
 
-/* Variables matching HealthCore design system */
+/* Component-specific variables (non-theme) */
 .dashboard {
-  --brand-primary: #4f46e5;
-  --brand-secondary: #8b5cf6;
-  --brand-accent: #ec4899;
-  
-  --theme-bg-primary: #0a0e27;
-  --theme-bg-secondary: #151a35;
-  --theme-bg-elevated: #1e2442;
-  --theme-bg-overlay: rgba(10, 14, 39, 0.95);
-  
-  --theme-text-primary: #e2e8f0;
-  --theme-text-secondary: #94a3b8;
-  --theme-text-tertiary: #64748b;
-  
-  --theme-border: #2d3561;
-  --theme-border-hover: #4a5578;
-  
-  --theme-success: #10b981;
-  --theme-warning: #f59e0b;
-  --theme-error: #ef4444;
-  
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;

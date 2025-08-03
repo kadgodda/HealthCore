@@ -167,7 +167,7 @@
 .lockedOverlay {
   position: absolute;
   inset: 0;
-  background: rgba(10, 14, 39, 0.8);
+  background: var(--theme-bg-overlay);
   backdrop-filter: blur(4px);
   display: flex;
   flex-direction: column;
