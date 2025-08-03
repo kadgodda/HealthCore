@@ -30,7 +30,7 @@
   font-size: 1.5rem;
   font-weight: 700;
   margin: 0;
-  background: linear-gradient(45deg, var(--brand-primary, #4f46e5), var(--brand-secondary, #8b5cf6));
+  background: linear-gradient(45deg, var(--color-primary), var(--theme-success));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -65,9 +65,9 @@
 }
 
 .navButton.active {
-  background: var(--brand-primary, #4f46e5);
-  color: white;
-  border-color: var(--brand-primary, #4f46e5);
+  background: var(--color-primary);
+  color: #ffffff;
+  border-color: var(--color-primary);
 }
 
 .navIcon {
