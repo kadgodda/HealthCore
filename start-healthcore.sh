@@ -34,18 +34,25 @@ kill_port() {
     fi
 }
 
-# Check which python command is available
-if command -v python3 &> /dev/null; then
-    PYTHON_CMD="python3"
-elif command -v python &> /dev/null; then
-    PYTHON_CMD="python"
+# Check if poetry is available for backend
+if command -v poetry &> /dev/null; then
+    echo -e "${GREEN}Poetry found, will use Poetry environment for backend${NC}"
+    USE_POETRY=true
 else
-    echo -e "${RED}Error: Python is not installed or not in PATH${NC}"
-    echo -e "${YELLOW}Please install Python 3 and ensure it's in your PATH${NC}"
-    exit 1
+    echo -e "${YELLOW}Poetry not found, using system Python${NC}"
+    USE_POETRY=false
+    # Check which python command is available
+    if command -v python3 &> /dev/null; then
+        PYTHON_CMD="python3"
+    elif command -v python &> /dev/null; then
+        PYTHON_CMD="python"
+    else
+        echo -e "${RED}Error: Python is not installed or not in PATH${NC}"
+        echo -e "${YELLOW}Please install Python 3 and ensure it's in your PATH${NC}"
+        exit 1
+    fi
+    echo -e "${GREEN}Using Python command: $PYTHON_CMD${NC}"
 fi
-
-echo -e "${GREEN}Using Python command: $PYTHON_CMD${NC}"
 
 # Clean up ports
 echo -e "${YELLOW}Cleaning up existing processes...${NC}"
@@ -59,7 +66,11 @@ sleep 2
 # Start backend
 echo -e "\n${GREEN}Starting Backend API...${NC}"
 cd backend
-nohup $PYTHON_CMD -m uvicorn main:app --reload --port 8000 > ../backend.log 2>&1 &
+if [ "$USE_POETRY" = true ]; then
+    nohup poetry run uvicorn main:app --reload --port 8000 > ../backend.log 2>&1 &
+else
+    nohup $PYTHON_CMD -m uvicorn main:app --reload --port 8000 > ../backend.log 2>&1 &
+fi
 BACKEND_PID=$!
 
 # Wait for backend to start

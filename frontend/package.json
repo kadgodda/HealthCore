@@ -14,15 +14,15 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@anteacore/shared": "github:kadgodda/anteacore-shared",
+    "@supabase/supabase-js": "^2.38.0",
+    "clsx": "^2.0.0",
+    "date-fns": "^2.30.0",
+    "lucide-react": "^0.263.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "@anteacore/shared": "^0.0.1",
-    "@supabase/supabase-js": "^2.38.0",
-    "lucide-react": "^0.263.0",
-    "clsx": "^2.0.0",
-    "zustand": "^4.4.0",
-    "date-fns": "^2.30.0",
-    "recharts": "^2.8.0"
+    "recharts": "^2.8.0",
+    "zustand": "^4.4.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",
