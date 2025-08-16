@@ -6,17 +6,23 @@ authors = ["HealthCore Team"]
 readme = "README.md"
 packages = [{include = "backend"}]
 
+[[tool.poetry.source]]
+name = "testpypi"
+url = "https://test.pypi.org/simple/"
+priority = "supplemental"
+
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.11"
 fastapi = "^0.109.0"
 uvicorn = {extras = ["standard"], version = "^0.27.0"}
 pydantic = "^2.5.0"
 supabase = "^2.3.0"
 python-multipart = "^0.0.9"
-websockets = "^12.0"
-httpx = "^0.26.0"
+websockets = "^14.0"
+httpx = "^0.27.0"
 python-dotenv = "^1.0.0"
 asyncio = "^3.4.3"
+anteacore-shared = "1.0.0b1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.4"
