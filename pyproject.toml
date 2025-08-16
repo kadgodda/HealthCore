@@ -22,7 +22,7 @@ websockets = "^14.0"
 httpx = "^0.27.0"
 python-dotenv = "^1.0.0"
 asyncio = "^3.4.3"
-anteacore-shared = "1.0.0b1"
+anteacore-shared = "^1.0.0b1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.4"
